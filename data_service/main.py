@@ -4,17 +4,17 @@ Smart Energy Platform - FastAPI数据服务
 提供设备能耗数据采集、存储和查询的RESTful API
 """
 
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-import logging
-
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 
-from app.api.readings import router as readings_router
-from app.api.devices import router as devices_router
 from app.api.device_types import router as device_types_router
+from app.api.devices import router as devices_router
+from app.api.readings import router as readings_router
 from app.core.config import settings
 from app.core.database import init_db
 from app.services.mqtt_client import MQTTClient
@@ -141,11 +141,14 @@ async def health_check():
 @app.get("/api/status")
 async def api_status():
     """API状态信息"""
-    mqtt_status = "connected" if app.state.mqtt_client and app.state.mqtt_client.is_connected else "disconnected"
+    mqtt_connected = (
+        app.state.mqtt_client and app.state.mqtt_client.is_connected
+    )
+    mqtt_status = "connected" if mqtt_connected else "disconnected"
     return {
         "api": "running",
         "mqtt": mqtt_status,
         "database": "postgresql",
         "timeseries_db": "influxdb",
-        "cache": "in-memory"
+        "cache": "in-memory",
     }

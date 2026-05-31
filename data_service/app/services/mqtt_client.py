@@ -1,15 +1,15 @@
-import paho.mqtt.client as mqtt
+import asyncio
 import json
 import logging
-import asyncio
 from datetime import datetime
-from typing import Optional, Callable
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Callable, Optional
+
+import paho.mqtt.client as mqtt
 
 from app.core.config import settings
 from app.core.database import async_session
-from app.models.energy_reading import EnergyReading
 from app.models.device import Device
+from app.models.energy_reading import EnergyReading
 
 logger = logging.getLogger(__name__)
 

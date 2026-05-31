@@ -51,7 +51,7 @@ import logging
 import uuid
 from datetime import datetime
 from typing import Dict, List, Optional
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
 
 logger = logging.getLogger(__name__)

@@ -1,14 +1,18 @@
-from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional, Dict, List
+from typing import Dict, List, Optional
 from uuid import UUID
+
+from pydantic import BaseModel, Field
 
 
 class EnergyReadingCreate(BaseModel):
     """能耗数据创建请求模型"""
-    device_id: str = Field(..., description="设备唯一标识", examples["device_001"])
-    timestamp: Optional[datetime] = Field(default_factory=datetime.utcnow, description="数据时间戳")
-    power_watts: float = Field(..., ge=0, description="瞬时功率(瓦)", examples[1500.5])
+
+    device_id: str = Field(..., description="设备唯一标识", examples=["device_001"])
+    timestamp: Optional[datetime] = Field(
+        default_factory=datetime.utcnow, description="数据时间戳"
+    )
+    power_watts: float = Field(..., ge=0, description="瞬时功率(瓦)", examples=[1500.5])
     energy_kwh: Optional[float] = Field(None, ge=0, description="累计电量(千瓦时)")
     voltage: Optional[float] = Field(None, ge=0, le=500, description="电压(伏)")
     current_amps: Optional[float] = Field(None, ge=0, description="电流(安)")

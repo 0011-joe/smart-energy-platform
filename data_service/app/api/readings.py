@@ -1,21 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+import logging
 from datetime import datetime, timedelta
 from typing import List, Optional
 from uuid import UUID
-import logging
 
-from app.core.database import get_db, get_influx_write_api, get_influx_query_api
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import settings
-from app.models.energy_reading import EnergyReading
+from app.core.database import get_db, get_influx_query_api, get_influx_write_api
 from app.models.device import Device
+from app.models.energy_reading import EnergyReading
 from app.schemas.reading import (
+    DeviceReadingSummary,
+    EnergyReadingBatch,
     EnergyReadingCreate,
     EnergyReadingResponse,
-    EnergyReadingBatch,
-    DeviceReadingSummary,
-    ReadingQueryParams
+    ReadingQueryParams,
 )
 
 logger = logging.getLogger(__name__)

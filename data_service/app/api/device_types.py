@@ -4,14 +4,15 @@
 提供设备类型配置的CRUD操作
 """
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.models.device_type import DeviceTypeConfig, DEFAULT_DEVICE_TYPES
+from app.models.device_type import DEFAULT_DEVICE_TYPES, DeviceTypeConfig
 
 router = APIRouter()
 

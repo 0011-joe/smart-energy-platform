@@ -4,9 +4,9 @@
 支持动态设备类型，无需修改代码即可添加新设备类型
 """
 
-from sqlalchemy import Column, String, Boolean, DateTime, JSON, Integer
-from sqlalchemy.orm import relationship
 from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, JSON, String
 
 from app.core.database import Base
 

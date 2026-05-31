@@ -6,10 +6,9 @@ C++版本的Python包装器
 如果C++二进制可用则调用，否则使用Python实现
 """
 
-import os
-import sys
-import subprocess
 import logging
+import os
+import subprocess
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
