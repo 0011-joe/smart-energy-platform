@@ -35,13 +35,13 @@ jobs:
           pip install black flake8 mypy isort
 
       - name: Check code formatting with Black
-        run: black --check --diff .
+        run: black --check --diff data_service/ analyst_tool/ device_simulator/
 
       - name: Check code style with Flake8
-        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        run: flake8 data_service/ analyst_tool/ device_simulator/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Check import sorting with isort
-        run: isort --check-only --diff .
+        run: isort --check-only --diff data_service/ analyst_tool/ device_simulator/
 
   # ============================================================================
   # 单元测试

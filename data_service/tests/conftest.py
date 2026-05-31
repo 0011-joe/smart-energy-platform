@@ -4,6 +4,7 @@
 提供测试夹具（fixtures）和配置
 """
 
+import os
 import pytest
 import asyncio
 from typing import Generator, AsyncGenerator
@@ -18,8 +19,8 @@ from app.core.config import settings
 from main import app
 
 
-# 测试数据库URL（使用SQLite内存数据库）
-TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+# 测试数据库URL（优先使用环境变量，默认使用SQLite）
+TEST_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
 
 # 创建测试引擎

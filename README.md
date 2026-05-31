@@ -1,88 +1,16 @@
-<div align="center"  \"center\"  \  \\"center\"  \  \\"center\">
+<div align="center">
 
-# ⚡ Smart Energy Platform  ⚡ 智能能源管理平台
-# ⚡ 智能能源平台
-# ⚡ 智能能源平台
+# ⚡ Smart Energy Platform
 
-**智能能源能耗管理平台 - 集成IoT设备模拟、数据分析与可视化的综合解决方案**
+**智能能源管理平台 - 集成IoT设备模拟、数据分析与可视化的综合解决方案**
 
-[![CI/CD](https://github.com/YOUR_USERNAME/smart-energy-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/smart-energy-platform/actions/workflows/ci.yml)
+[![CI/CD](https://github.com/0011-joe/smart-energy-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/0011-joe/smart-energy-platform/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev/)
 
 </div>
-
----
-
-## 🚀 快速开始
-
-### 方式一：Docker 一键启动（推荐）
-
-```bash
-# 1. 克隆项目
-git clone https://github.com/YOUR_USERNAME/smart-energy-platform.git
-cd smart-energy-platform
-
-# 2. 启动基础服务（PostgreSQL + InfluxDB + MQTT + Redis）
-docker-compose -f docker-compose.dev.yml up -d
-
-# 3. 安装后端依赖并启动
-cd data_service
-pip install -r requirements.txt
-cp .env.example .env  # 编辑 .env 配置数据库连接
-python main.py
-
-# 4. 新终端 - 启动前端
-cd web_app
-npm install
-npm run dev
-```
-
-### 方式二：本地运行（无需 Docker）
-
-```bash
-# 1. 克隆项目
-git clone https://github.com/YOUR_USERNAME/smart-energy-platform.git
-cd smart-energy-platform/data_service
-
-# 2. 安装依赖
-pip install -r requirements.txt
-
-# 3. 创建 .env 文件（使用 SQLite）
-echo DATABASE_URL=sqlite+aiosqlite:///./smart_energy.db > .env
-
-# 4. 启动后端
-python main.py
-
-# 5. 新终端 - 启动前端
-cd ../web_app
-npm install
-npm run dev
-```
-
-### 访问地址
-
-| 服务 | 地址 | 说明 |
-|------|------|------|
-| 🌐 前端页面 | http://localhost:5173 | React 仪表盘 |
-| 📡 API 文档 | http://localhost:8000/docs | Swagger UI |
-| 📊 数据分析 | http://localhost:8501 | Streamlit 分析工具 |
-| 🗄️ InfluxDB | http://localhost:8086 | 时序数据库 UI |
-
----
-
-## 📸 页面预览
-
-> 💡 点击下方链接查看交互式页面预览（纯前端演示，无需启动后端）
-
-| 页面 | 预览链接 | 说明 |
-|------|----------|------|
-| 📊 仪表盘 | [dashboard.html](docs/previews/dashboard.html) | 总览：统计数据 + 能耗曲线 + 设备分布 |
-| 📱 设备列表 | [device-list.html](docs/previews/device-list.html) | 所有设备卡片视图，支持搜索筛选 |
-| 🔌 设备详情 | [device-detail.html](docs/previews/device-detail.html) | 单设备实时数据 + 历史趋势 |
-| 📈 数据分析 | [analytics.html](docs/previews/analytics.html) | 多维统计 + 异常检测 + 告警记录 |
 
 ---
 
@@ -105,12 +33,11 @@ Smart Energy Platform 是一个全栈智能能源管理系统，用于监控、�
 ```mermaid
 graph TB
     subgraph "前端层"
-        WEB[React Web App<br/>Port 3000]
+        WEB[React Web App<br/>Port 5173]
         ANALYST[Streamlit Analytics<br/>Port 8501]
     end
 
     subgraph "API层"
-        NGINX[Nginx Reverse Proxy<br/>Port 80]
         API[FastAPI Data Service<br/>Port 8000]
     end
 
@@ -129,9 +56,8 @@ graph TB
         MATTER[Matter Bridge]
     end
 
-    WEB --> NGINX
-    ANALYST --> NGINX
-    NGINX --> API
+    WEB --> API
+    ANALYST --> API
     API --> PG
     API --> INFLUX
     API --> REDIS
@@ -185,7 +111,6 @@ graph TB
 | 技术 | 用途 | 选型理由 |
 |------|------|----------|
 | **Docker** | 容器化 | 环境一致性 |
-| **Nginx** | 反向代理 | 高性能，配置灵活 |
 | **GitHub Actions** | CI/CD | 与GitHub深度集成 |
 
 ---
@@ -204,17 +129,6 @@ graph TB
 - **实时监控仪表盘** - 展示全屋总能耗、设备状态
 - **多维度统计** - 按小时、天、周粒度聚合分析
 - **异常检测** - 基于Z-score的能耗异常识别
-- **异常检测** - 基于 Z-score 的能耗异常识别
-- **异常检测** - 基于 Z-score 的能耗异常识别
-- **异常检测** - 基于 Z-score 的能耗异常识别
-- **负荷分析** - 24小时负荷曲线、用电高峰识别
-- **负荷分析** - 24 小时负荷曲线、用电高峰识别
-- **负荷分析** - 24 小时负荷曲线、用电高峰识别
-- **负荷分析** - 24小时负荷曲线、用电高峰识别
-- **负荷分析** - 24 小时负荷曲线、用电高峰识别
-- **负荷分析** - 24小时负荷曲线、用电高峰识别
-- **负荷分析** - 24小时负荷曲线、用电高峰识别
-- **负荷分析** - 24 小时负荷曲线、用电高峰识别
 - **负荷分析** - 24小时负荷曲线、用电高峰识别
 - **预测模型** - 基于线性回归的能耗预测
 
@@ -234,11 +148,10 @@ graph TB
 
 ---
 
-
 ## 📁 项目结构
 
 ```
-smart-energy-platform/  智能能源平台/  智能能源平台/  智能能源平台/
+smart-energy-platform/
 ├── .github/workflows/          # GitHub Actions CI/CD
 │   └── ci.yml
 ├── data_service/               # FastAPI数据服务
@@ -342,7 +255,6 @@ Matter（原名CHIP）是由CSA联盟开发的统一智能家居标准，旨在�
 ### 核心特性
 
 - **基于IP协议** - 使用Wi-Fi、Thread、以太网
-- **基于 IP 协议** - 使用 Wi-Fi、Thread、以太网
 - **统一设备模型** - 标准设备类型和集群定义
 - **本地优先** - 减少对云服务的依赖
 - **安全通信** - 证书和加密机制
@@ -361,7 +273,7 @@ MATTER_DEVICE_TYPES = {
 }
 
 # 模拟Matter桥接器
-class MatterBridgeDevice:  类 MatterBridgeDevice：
+class MatterBridgeDevice:
     def add_bridged_device(self, device_id, device_type, name):
         # 将设备添加到Matter网络
         ...
@@ -371,10 +283,9 @@ class MatterBridgeDevice:  类 MatterBridgeDevice：
         ...
 ```
 
-### 
+### 面试话术
 
-> 模拟支持Matter协议的设备，并通过一个桥接服务将其接入平台。桥接器将非Matter设备（如智能电表、太阳能板）转换为Matter端点，使其能够参与Matter网络通信。提现IoT协议栈和设备互操作性的理解。"
-
+> "本项目模拟了支持Matter协议的设备，并通过一个桥接服务将其接入平台。桥接器将非Matter设备（如智能电表、太阳能板）转换为Matter端点，使其能够参与Matter网络通信。这展示了对IoT协议栈和设备互操作性的理解。"
 
 ---
 
@@ -404,6 +315,76 @@ pytest tests/ --cov=app --cov-report=html
 
 ---
 
+## 🚀 快速开始
+
+### 方式一：Docker 一键启动（推荐）
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/0011-joe/smart-energy-platform.git
+cd smart-energy-platform
+
+# 2. 启动基础服务（PostgreSQL + InfluxDB + MQTT + Redis）
+docker-compose -f docker-compose.dev.yml up -d
+
+# 3. 安装后端依赖并启动
+cd data_service
+pip install -r requirements.txt
+cp .env.example .env  # 编辑 .env 配置数据库连接
+python main.py
+
+# 4. 新终端 - 启动前端
+cd web_app
+npm install
+npm run dev
+```
+
+### 方式二：本地运行（无需 Docker）
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/0011-joe/smart-energy-platform.git
+cd smart-energy-platform/data_service
+
+# 2. 安装依赖
+pip install -r requirements.txt
+
+# 3. 创建 .env 文件（使用 SQLite）
+echo DATABASE_URL=sqlite+aiosqlite:///./smart_energy.db > .env
+
+# 4. 启动后端
+python main.py
+
+# 5. 新终端 - 启动前端
+cd ../web_app
+npm install
+npm run dev
+```
+
+### 访问地址
+
+| 服务 | 地址 | 说明 |
+|------|------|------|
+| 🌐 前端页面 | http://localhost:5173 | React 仪表盘 |
+| 📡 API 文档 | http://localhost:8000/docs | Swagger UI |
+| 📊 数据分析 | http://localhost:8501 | Streamlit 分析工具 |
+| 🗄️ InfluxDB | http://localhost:8086 | 时序数据库 UI |
+
+---
+
+## 📸 页面预览
+
+> 💡 点击下方链接查看交互式页面预览（纯前端演示，无需启动后端）
+
+| 页面 | 预览链接 | 说明 |
+|------|----------|------|
+| 📊 仪表盘 | [dashboard.html](docs/previews/dashboard.html) | 总览：统计数据 + 能耗曲线 + 设备分布 |
+| 📱 设备列表 | [device-list.html](docs/previews/device-list.html) | 所有设备卡片视图，支持搜索筛选 |
+| 🔌 设备详情 | [device-detail.html](docs/previews/device-detail.html) | 单设备实时数据 + 历史趋势 |
+| 📈 数据分析 | [analytics.html](docs/previews/analytics.html) | 多维统计 + 异常检测 + 告警记录 |
+
+---
+
 ## 🔄 CI/CD流水线
 
 项目配置了完整的GitHub Actions流水线：
@@ -426,7 +407,7 @@ graph LR
 
 ### 流水线阶段
 
-1. **代码质量检查** - Black、Flake8、isort
+1. **代码质量检查** - Black、Flake8、isort（仅检查 Python 目录）
 2. **单元测试** - Pytest + 覆盖率报告
 3. **构建镜像** - Docker多服务构建
 4. **集成测试** - 端到端验证
