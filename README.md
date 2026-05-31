@@ -16,6 +16,76 @@
 
 ---
 
+## 🚀 快速开始
+
+### 方式一：Docker 一键启动（推荐）
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/YOUR_USERNAME/smart-energy-platform.git
+cd smart-energy-platform
+
+# 2. 启动基础服务（PostgreSQL + InfluxDB + MQTT + Redis）
+docker-compose -f docker-compose.dev.yml up -d
+
+# 3. 安装后端依赖并启动
+cd data_service
+pip install -r requirements.txt
+cp .env.example .env  # 编辑 .env 配置数据库连接
+python main.py
+
+# 4. 新终端 - 启动前端
+cd web_app
+npm install
+npm run dev
+```
+
+### 方式二：本地运行（无需 Docker）
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/YOUR_USERNAME/smart-energy-platform.git
+cd smart-energy-platform/data_service
+
+# 2. 安装依赖
+pip install -r requirements.txt
+
+# 3. 创建 .env 文件（使用 SQLite）
+echo DATABASE_URL=sqlite+aiosqlite:///./smart_energy.db > .env
+
+# 4. 启动后端
+python main.py
+
+# 5. 新终端 - 启动前端
+cd ../web_app
+npm install
+npm run dev
+```
+
+### 访问地址
+
+| 服务 | 地址 | 说明 |
+|------|------|------|
+| 🌐 前端页面 | http://localhost:5173 | React 仪表盘 |
+| 📡 API 文档 | http://localhost:8000/docs | Swagger UI |
+| 📊 数据分析 | http://localhost:8501 | Streamlit 分析工具 |
+| 🗄️ InfluxDB | http://localhost:8086 | 时序数据库 UI |
+
+---
+
+## 📸 页面预览
+
+> 💡 点击下方链接查看交互式页面预览（纯前端演示，无需启动后端）
+
+| 页面 | 预览链接 | 说明 |
+|------|----------|------|
+| 📊 仪表盘 | [dashboard.html](docs/previews/dashboard.html) | 总览：统计数据 + 能耗曲线 + 设备分布 |
+| 📱 设备列表 | [device-list.html](docs/previews/device-list.html) | 所有设备卡片视图，支持搜索筛选 |
+| 🔌 设备详情 | [device-detail.html](docs/previews/device-detail.html) | 单设备实时数据 + 历史趋势 |
+| 📈 数据分析 | [analytics.html](docs/previews/analytics.html) | 多维统计 + 异常检测 + 告警记录 |
+
+---
+
 ## 📖 项目简介
 
 Smart Energy Platform 是一个全栈智能能源管理系统，用于监控、分析和优化家庭或商业建筑的能源消耗。项目采用微服务架构，集成了IoT设备模拟、实时数据采集、高级数据分析和直观的可视化界面。

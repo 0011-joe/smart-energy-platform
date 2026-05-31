@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设备详情 - Smart Energy Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 20px; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <nav class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">⚡</span>
+        <span class="font-bold text-lg">Smart Energy Platform</span>
+      </div>
+      <div class="flex gap-6">
+        <a href="dashboard.html" class="text-gray-500 hover:text-gray-700">仪表盘</a>
+        <a href="device-list.html" class="text-gray-500 hover:text-gray-700">设备列表</a>
+        <a href="device-detail.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">设备详情</a>
+        <a href="analytics.html" class="text-gray-500 hover:text-gray-700">数据分析</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- 面包屑 -->
+    <div class="text-sm text-gray-500 mb-4">
+      <a href="device-list.html" class="hover:text-blue-600">设备列表</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-800">智能电表 001</span>
+    </div>
+
+    <!-- 设备头部信息 -->
+    <div class="card mb-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <span class="text-4xl">🔌</span>
+          <div>
+            <h1 class="text-2xl font-bold">智能电表 001</h1>
+            <div class="flex items-center gap-3 mt-1">
+              <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">SMART METER</span>
+              <span class="text-green-600 text-sm">● 在线</span>
+              <span class="text-gray-400 text-sm">设备ID: smart_meter_001</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">刷新数据</button>
+          <button class="px-4 py-2 border rounded-lg text-sm hover:bg-gray-50">导出报告</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 实时数据卡片 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="card text-center">
+        <div class="text-gray-500 text-sm">当前功率</div>
+        <div class="text-3xl font-bold text-red-500 mt-1">1,500</div>
+        <div class="text-gray-400 text-sm">W</div>
+      </div>
+      <div class="card text-center">
+        <div class="text-gray-500 text-sm">今日用电</div>
+        <div class="text-3xl font-bold text-blue-500 mt-1">18.5</div>
+        <div class="text-gray-400 text-sm">kWh</div>
+      </div>
+      <div class="card text-center">
+        <div class="text-gray-500 text-sm">当前电压</div>
+        <div class="text-3xl font-bold text-green-600 mt-1">220.5</div>
+        <div class="text-gray-400 text-sm">V</div>
+      </div>
+      <div class="card text-center">
+        <div class="text-gray-500 text-sm">当前电流</div>
+        <div class="text-3xl font-bold text-orange-500 mt-1">6.8</div>
+        <div class="text-gray-400 text-sm">A</div>
+      </div>
+    </div>
+
+    <!-- 图表 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      <div class="card">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-semibold">24小时功率趋势</h3>
+          <div class="flex gap-2">
+            <button class="px-3 py-1 bg-blue-600 text-white rounded text-xs">小时</button>
+            <button class="px-3 py-1 border rounded text-xs">天</button>
+            <button class="px-3 py-1 border rounded text-xs">周</button>
+          </div>
+        </div>
+        <div id="powerChart" style="height: 280px;"></div>
+      </div>
+      <div class="card">
+        <h3 class="font-semibold mb-4">用电量统计</h3>
+        <div id="energyChart" style="height: 280px;"></div>
+      </div>
+    </div>
+
+    <!-- 最近读数 -->
+    <div class="card">
+      <h3 class="font-semibold mb-4">最近读数记录</h3>
+      <table class="w-full">
+        <thead>
+          <tr class="border-b text-left text-gray-500 text-sm">
+            <th class="pb-3">时间</th>
+            <th class="pb-3">功率 (W)</th>
+            <th class="pb-3">电量 (kWh)</th>
+            <th class="pb-3">电压 (V)</th>
+            <th class="pb-3">电流 (A)</th>
+          </tr>
+        </thead>
+        <tbody class="text-sm">
+          <tr class="border-b"><td class="py-2">2026-05-31 14:30:00</td><td class="text-red-500 font-medium">1,500</td><td>45.20</td><td>220.5</td><td>6.82</td></tr>
+          <tr class="border-b"><td class="py-2">2026-05-31 14:00:00</td><td class="text-red-500 font-medium">1,480</td><td>44.95</td><td>221.0</td><td>6.70</td></tr>
+          <tr class="border-b"><td class="py-2">2026-05-31 13:30:00</td><td class="text-red-500 font-medium">1,520</td><td>44.70</td><td>219.8</td><td>6.91</td></tr>
+          <tr class="border-b"><td class="py-2">2026-05-31 13:00:00</td><td class="text-red-500 font-medium">1,450</td><td>44.45</td><td>220.2</td><td>6.58</td></tr>
+          <tr><td class="py-2">2026-05-31 12:30:00</td><td class="text-red-500 font-medium">1,380</td><td>44.20</td><td>221.5</td><td>6.23</td></tr>
+        </tbody>
+      </table>
+      <div class="flex justify-center mt-4 gap-2">
+        <button class="px-3 py-1 border rounded text-sm text-gray-400">&lt;</button>
+        <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm">1</button>
+        <button class="px-3 py-1 border rounded text-sm">2</button>
+        <button class="px-3 py-1 border rounded text-sm">3</button>
+        <button class="px-3 py-1 border rounded text-sm">&gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const powerChart = echarts.init(document.getElementById('powerChart'));
+    powerChart.setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: { type: 'category', data: ['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00'] },
+      yAxis: { type: 'value', name: 'W' },
+      series: [{
+        type: 'line', smooth: true,
+        areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(239,68,68,0.2)' }, { offset: 1, color: 'rgba(239,68,68,0.02)' }] } },
+        lineStyle: { color: '#ef4444', width: 2 },
+        itemStyle: { color: '#ef4444' },
+        data: [450, 380, 320, 800, 1200, 1500, 1300, 1500, 1600, 1800, 1500, 900]
+      }]
+    });
+
+    const energyChart = echarts.init(document.getElementById('energyChart'));
+    energyChart.setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: { type: 'category', data: ['周一','周二','周三','周四','周五','周六','周日'] },
+      yAxis: { type: 'value', name: 'kWh' },
+      series: [{
+        type: 'bar',
+        itemStyle: { color: '#3b82f6', borderRadius: [4,4,0,0] },
+        data: [15.2, 18.5, 16.8, 19.2, 17.5, 22.0, 20.5]
+      }]
+    });
+
+    window.addEventListener('resize', () => { powerChart.resize(); energyChart.resize(); });
+  </script>
+</body>
+</html>
