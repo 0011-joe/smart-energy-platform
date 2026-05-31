@@ -2,7 +2,7 @@
 
 # ⚡ Smart Energy Platform
 
-**智能能源管理平台 - 集成IoT设备模拟、数据分析与可视化的综合解决方案**
+**智能能源能耗管理平台 - 集成IoT设备模拟、数据分析与可视化的综合解决方案**
 
 [![CI/CD](https://github.com/YOUR_USERNAME/smart-energy-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/smart-energy-platform/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
