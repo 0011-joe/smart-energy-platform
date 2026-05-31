@@ -1,15 +1,14 @@
 from app.core.config import settings
-from influxdb_client import InfluxDBClient
-from influxdb_client.client.write_api import SYNCHRONOUS
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 # PostgreSQL异步引擎
+_db_url = settings.DATABASE_URL
+if _db_url.startswith("postgresql://"):
+    _db_url = _db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
 engine = create_async_engine(
-    settings.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://"),
-    echo=settings.DEBUG,
-    pool_size=20,
-    max_overflow=10,
+    _db_url, echo=settings.DEBUG, pool_size=20, max_overflow=10
 )
 
 # 异步会话工厂
@@ -21,13 +20,27 @@ class Base(DeclarativeBase):
     pass
 
 
-# InfluxDB客户端
-influx_client = InfluxDBClient(
-    url=settings.INFLUXDB_URL, token=settings.INFLUXDB_TOKEN, org=settings.INFLUXDB_ORG
-)
+# InfluxDB客户端（延迟初始化，避免导入时连接失败）
+_influx_client = None
+_write_api = None
+_query_api = None
 
-write_api = influx_client.write_api(write_options=SYNCHRONOUS)
-query_api = influx_client.query_api()
+
+def _get_influx_client():
+    """获取InfluxDB客户端（延迟初始化）"""
+    global _influx_client, _write_api, _query_api
+    if _influx_client is None:
+        from influxdb_client import InfluxDBClient
+        from influxdb_client.client.write_api import SYNCHRONOUS
+
+        _influx_client = InfluxDBClient(
+            url=settings.INFLUXDB_URL,
+            token=settings.INFLUXDB_TOKEN,
+            org=settings.INFLUXDB_ORG,
+        )
+        _write_api = _influx_client.write_api(write_options=SYNCHRONOUS)
+        _query_api = _influx_client.query_api()
+    return _influx_client
 
 
 async def init_db():
@@ -51,9 +64,11 @@ async def get_db() -> AsyncSession:
 
 def get_influx_write_api():
     """获取InfluxDB写入API"""
-    return write_api
+    _get_influx_client()
+    return _write_api
 
 
 def get_influx_query_api():
     """获取InfluxDB查询API"""
-    return query_api
+    _get_influx_client()
+    return _query_api
