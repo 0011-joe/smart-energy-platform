@@ -3,6 +3,10 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import settings
 from app.core.database import get_db, get_influx_query_api, get_influx_write_api
 from app.models.device import Device
@@ -14,9 +18,6 @@ from app.schemas.reading import (
     EnergyReadingResponse,
     ReadingQueryParams,
 )
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

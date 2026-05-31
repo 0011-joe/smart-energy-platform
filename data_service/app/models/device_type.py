@@ -6,8 +6,9 @@
 
 from datetime import datetime
 
-from app.core.database import Base
 from sqlalchemy import JSON, Boolean, Column, DateTime, Integer, String
+
+from app.core.database import Base
 
 
 class DeviceTypeConfig(Base):

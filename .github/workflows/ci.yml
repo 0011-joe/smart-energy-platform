@@ -41,7 +41,7 @@ jobs:
         run: flake8 data_service/ analyst_tool/ device_simulator/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Check import sorting with isort
-        run: isort --check-only --diff data_service/ analyst_tool/ device_simulator/
+        run: isort --profile black --check-only --diff data_service/ analyst_tool/ device_simulator/
 
   # ============================================================================
   # 单元测试

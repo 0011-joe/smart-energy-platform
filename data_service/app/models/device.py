@@ -2,12 +2,13 @@ import enum
 import uuid
 from datetime import datetime
 
-from app.core.database import Base
 from sqlalchemy import Boolean, Column, DateTime
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy import Float, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
+from app.core.database import Base
 
 
 class DeviceType(str, enum.Enum):

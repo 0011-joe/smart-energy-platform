@@ -7,16 +7,17 @@ Smart Energy Platform - FastAPI数据服务
 import logging
 from contextlib import asynccontextmanager
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+
 from app.api.device_types import router as device_types_router
 from app.api.devices import router as devices_router
 from app.api.readings import router as readings_router
 from app.core.config import settings
 from app.core.database import init_db
 from app.services.mqtt_client import MQTTClient
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.inmemory import InMemoryBackend
 
 # 配置日志
 logging.basicConfig(

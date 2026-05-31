@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
 from typing import List, Optional
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
 from app.models.device import Device, DeviceStatus, DeviceType
 from app.models.energy_reading import EnergyReading
 from app.schemas.reading import EnergyReadingResponse
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 

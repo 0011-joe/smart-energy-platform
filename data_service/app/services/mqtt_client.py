@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Callable, Optional
 
 import paho.mqtt.client as mqtt
+
 from app.core.config import settings
 from app.core.database import async_session
 from app.models.device import Device

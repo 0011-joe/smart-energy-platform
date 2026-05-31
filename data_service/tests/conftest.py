@@ -10,12 +10,13 @@ from datetime import datetime
 from typing import AsyncGenerator
 
 import pytest
-from app.core.config import settings
-from app.core.database import Base, get_db
 from httpx import ASGITransport, AsyncClient
-from main import app
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
+
+from app.core.config import settings
+from app.core.database import Base, get_db
+from main import app
 
 # 测试数据库URL（优先使用环境变量，默认使用SQLite）
 TEST_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
