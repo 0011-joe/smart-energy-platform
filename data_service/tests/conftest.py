@@ -4,7 +4,6 @@
 提供测试夹具（fixtures）和配置
 """
 
-import asyncio
 import os
 from datetime import datetime
 from typing import AsyncGenerator
@@ -14,13 +13,17 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
-from app.core.config import settings
 from app.core.database import Base, get_db
 from main import app
 
 # 测试数据库URL（优先使用环境变量，默认使用SQLite）
 TEST_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
+# 如果是PostgreSQL，替换驱动为asyncpg
+if TEST_DATABASE_URL.startswith("postgresql://"):
+    TEST_DATABASE_URL = TEST_DATABASE_URL.replace(
+        "postgresql://", "postgresql+asyncpg://", 1
+    )
 
 # 创建测试引擎
 test_engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
@@ -29,14 +32,6 @@ test_engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullP
 test_async_session = async_sessionmaker(
     test_engine, class_=AsyncSession, expire_on_commit=False
 )
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    """创建事件循环"""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.fixture(autouse=True)
@@ -74,14 +69,12 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
 @pytest.fixture
 async def client() -> AsyncGenerator[AsyncClient, None]:
     """获取测试客户端"""
-    # 覆盖数据库依赖
     app.dependency_overrides[get_db] = override_get_db
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
 
-    # 清理依赖覆盖
     app.dependency_overrides.clear()
 
 
