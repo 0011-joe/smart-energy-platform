@@ -1,6 +1,8 @@
-<div align="center">
+<div align="center"  \"center\"  \  \\"center\">
 
 # ⚡ Smart Energy Platform
+# ⚡ 智能能源平台
+# ⚡ 智能能源平台
 
 **智能能源管理平台 - 集成IoT设备模拟、数据分析与可视化的综合解决方案**
 
@@ -129,6 +131,16 @@ graph TB
 - **实时监控仪表盘** - 展示全屋总能耗、设备状态
 - **多维度统计** - 按小时、天、周粒度聚合分析
 - **异常检测** - 基于Z-score的能耗异常识别
+- **异常检测** - 基于 Z-score 的能耗异常识别
+- **负荷分析** - 24小时负荷曲线、用电高峰识别
+- **负荷分析** - 24 小时负荷曲线、用电高峰识别
+- **负荷分析** - 24 小时负荷曲线、用电高峰识别
+- **负荷分析** - 24小时负荷曲线、用电高峰识别
+- **负荷分析** - 24小时负荷曲线、用电高峰识别
+- **负荷分析** - 24 小时负荷曲线、用电高峰识别
+- **负荷分析** - 24小时负荷曲线、用电高峰识别
+- **负荷分析** - 24 小时负荷曲线、用电高峰识别
+- **负荷分析** - 24 小时负荷曲线、用电高峰识别
 - **负荷分析** - 24小时负荷曲线、用电高峰识别
 - **预测模型** - 基于线性回归的能耗预测
 
@@ -151,7 +163,7 @@ graph TB
 ## 📁 项目结构
 
 ```
-smart-energy-platform/
+smart-energy-platform/  智能能源平台/  智能能源平台/
 ├── .github/workflows/          # GitHub Actions CI/CD
 │   └── ci.yml
 ├── data_service/               # FastAPI数据服务
@@ -228,16 +240,16 @@ POST   /api/device-types/init-defaults  # 初始化默认类型
 ```bash
 # 创建能耗读数
 curl -X POST http://localhost:8000/api/readings \
-  -H "Content-Type: application/json" \
+  -H "Content-Type: application/json" \  -H "Content-Type: application/json"
   -d '{
     "device_id": "smart_meter_001",
     "power_watts": 1500.5,
-    "energy_kwh": 45.2,
+    "energy_kwh": 45.2,  "energy_kwh": 45.2，
     "voltage": 220.0,
     "current_amps": 6.82
   }'
 
-# 获取设备列表
+# 获取设备列表  # 获取设备列表"
 curl http://localhost:8000/api/devices
 
 # 获取设备读数（带时间范围）
@@ -249,12 +261,15 @@ curl "http://localhost:8000/api/devices/smart_meter_001/readings?hours=24&limit=
 ## 🔌 Matter协议集成
 
 ### 什么是Matter？
+### 什么是 Matter？
 
 Matter（原名CHIP）是由CSA联盟开发的统一智能家居标准，旨在解决设备互操作性问题。
 
 ### 核心特性
 
 - **基于IP协议** - 使用Wi-Fi、Thread、以太网
+- **基于 IP 协议** - 使用 Wi-Fi、Thread、以太网
+- **基于 IP 协议** - 使用 Wi-Fi、Thread、以太网
 - **统一设备模型** - 标准设备类型和集群定义
 - **本地优先** - 减少对云服务的依赖
 - **安全通信** - 证书和加密机制
@@ -273,7 +288,7 @@ MATTER_DEVICE_TYPES = {
 }
 
 # 模拟Matter桥接器
-class MatterBridgeDevice:
+class MatterBridgeDevice:  类 MatterBridgeDevice：
     def add_bridged_device(self, device_id, device_type, name):
         # 将设备添加到Matter网络
         ...
@@ -283,7 +298,7 @@ class MatterBridgeDevice:
         ...
 ```
 
-### 面试话术
+### 小结
 
 > "本项目模拟了支持Matter协议的设备，并通过一个桥接服务将其接入平台。桥接器将非Matter设备（如智能电表、太阳能板）转换为Matter端点，使其能够参与Matter网络通信。这展示了对IoT协议栈和设备互操作性的理解。"
 
@@ -300,6 +315,8 @@ pytest tests/ -v
 ```
 
 ### 运行集成测试
+“### 运行集成测试”
+“### 运行集成测试”
 
 ```bash
 chmod +x scripts/test_integration.sh
