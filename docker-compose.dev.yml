@@ -1,0 +1,67 @@
+# 开发环境配置 - 使用此文件进行本地开发
+# 用法: docker-compose -f docker-compose.dev.yml up
+
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart-energy-postgres-dev
+    environment:
+      POSTGRES_DB: smart_energy
+      POSTGRES_USER: energy_admin
+      POSTGRES_PASSWORD: dev_password_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - smart-energy-net-dev
+
+  # InfluxDB时序数据库
+  influxdb:
+    image: influxdb:2.7
+    container_name: smart-energy-influxdb-dev
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: dev_influx_123
+      DOCKER_INFLUXDB_INIT_ORG: smart-energy
+      DOCKER_INFLUXDB_INIT_BUCKET: energy_data
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: dev-token-123
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data_dev:/var/lib/influxdb2
+    networks:
+      - smart-energy-net-dev
+
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: smart-energy-mqtt-dev
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - smart-energy-net-dev
+
+  # Redis缓存 (可选)
+  redis:
+    image: redis:7-alpine
+    container_name: smart-energy-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - smart-energy-net-dev
+
+volumes:
+  postgres_data_dev:
+  influxdb_data_dev:
+
+networks:
+  smart-energy-net-dev:
+    driver: bridge

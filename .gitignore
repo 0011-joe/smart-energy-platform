@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+.venv
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Docker
+docker-compose.override.yml
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build
+*.log
+*.pyc
+.cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+dist/
+build/
+
+# React/Vite
+web_app/dist/
+web_app/node_modules/
+.webpack/
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Project specific
+config/mosquitto/data/
+config/mosquitto/log/
+models/*.joblib
+*.db
+*.sqlite3
+
+# Secrets
+.env.local
+.env.production
+secrets.json
