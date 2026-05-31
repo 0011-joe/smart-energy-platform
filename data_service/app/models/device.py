@@ -2,15 +2,17 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, Enum as SQLEnum, Float, String
+from app.core.database import Base
+from sqlalchemy import Boolean, Column, DateTime
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy import Float, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-
-from app.core.database import Base
 
 
 class DeviceType(str, enum.Enum):
     """设备类型枚举"""
+
     SMART_METER = "smart_meter"
     SOLAR_PANEL = "solar_panel"
     BATTERY = "battery"
@@ -22,6 +24,7 @@ class DeviceType(str, enum.Enum):
 
 class DeviceStatus(str, enum.Enum):
     """设备状态枚举"""
+
     ONLINE = "online"
     OFFLINE = "offline"
     MAINTENANCE = "maintenance"
@@ -30,6 +33,7 @@ class DeviceStatus(str, enum.Enum):
 
 class Device(Base):
     """设备信息表"""
+
     __tablename__ = "devices"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

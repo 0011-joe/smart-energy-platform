@@ -6,9 +6,8 @@
 
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, JSON, String
-
 from app.core.database import Base
+from sqlalchemy import JSON, Boolean, Column, DateTime, Integer, String
 
 
 class DeviceTypeConfig(Base):
@@ -18,6 +17,7 @@ class DeviceTypeConfig(Base):
     存储设备类型的元数据和配置信息
     前端可根据这些配置自动渲染不同的图标和控制组件
     """
+
     __tablename__ = "device_type_configs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -71,7 +71,7 @@ class DeviceTypeConfig(Base):
             "data_fields": self.data_fields,
             "matter_device_type": self.matter_device_type,
             "matter_clusters": self.matter_clusters,
-            "is_active": self.is_active
+            "is_active": self.is_active,
         }
 
 
@@ -90,10 +90,10 @@ DEFAULT_DEVICE_TYPES = [
             {"key": "power_watts", "label": "瞬时功率", "unit": "W", "type": "number"},
             {"key": "energy_kwh", "label": "累计电量", "unit": "kWh", "type": "number"},
             {"key": "voltage", "label": "电压", "unit": "V", "type": "number"},
-            {"key": "current_amps", "label": "电流", "unit": "A", "type": "number"}
+            {"key": "current_amps", "label": "电流", "unit": "A", "type": "number"},
         ],
         "matter_device_type": 0x000D,
-        "matter_clusters": [0x0B04, 0x0702]
+        "matter_clusters": [0x0B04, 0x0702],
     },
     {
         "type_key": "solar_panel",
@@ -107,10 +107,10 @@ DEFAULT_DEVICE_TYPES = [
         "data_fields": [
             {"key": "power_watts", "label": "发电功率", "unit": "W", "type": "number"},
             {"key": "energy_kwh", "label": "发电量", "unit": "kWh", "type": "number"},
-            {"key": "efficiency", "label": "转换效率", "unit": "%", "type": "number"}
+            {"key": "efficiency", "label": "转换效率", "unit": "%", "type": "number"},
         ],
         "matter_device_type": 0x0510,
-        "matter_clusters": [0x0B04, 0x0702]
+        "matter_clusters": [0x0B04, 0x0702],
     },
     {
         "type_key": "battery",
@@ -124,12 +124,17 @@ DEFAULT_DEVICE_TYPES = [
             {"type": "slider", "label": "充电上限", "min": 0, "max": 100, "unit": "%"}
         ],
         "data_fields": [
-            {"key": "power_watts", "label": "充放电功率", "unit": "W", "type": "number"},
+            {
+                "key": "power_watts",
+                "label": "充放电功率",
+                "unit": "W",
+                "type": "number",
+            },
             {"key": "charge_level", "label": "电量", "unit": "%", "type": "number"},
-            {"key": "capacity", "label": "容量", "unit": "kWh", "type": "number"}
+            {"key": "capacity", "label": "容量", "unit": "kWh", "type": "number"},
         ],
         "matter_device_type": 0x0510,
-        "matter_clusters": [0x0B04, 0x0702]
+        "matter_clusters": [0x0B04, 0x0702],
     },
     {
         "type_key": "ev_charger",
@@ -141,15 +146,19 @@ DEFAULT_DEVICE_TYPES = [
         "capabilities": ["power_monitoring", "on_off_control", "charge_scheduling"],
         "control_components": [
             {"type": "switch", "label": "充电开关"},
-            {"type": "select", "label": "充电模式", "options": ["慢充", "快充", "定时"]}
+            {
+                "type": "select",
+                "label": "充电模式",
+                "options": ["慢充", "快充", "定时"],
+            },
         ],
         "data_fields": [
             {"key": "power_watts", "label": "充电功率", "unit": "W", "type": "number"},
             {"key": "energy_kwh", "label": "充电量", "unit": "kWh", "type": "number"},
-            {"key": "charging_status", "label": "充电状态", "type": "string"}
+            {"key": "charging_status", "label": "充电状态", "type": "string"},
         ],
         "matter_device_type": 0x010A,
-        "matter_clusters": [0x0006, 0x0B04, 0x0702]
+        "matter_clusters": [0x0006, 0x0B04, 0x0702],
     },
     {
         "type_key": "hvac",
@@ -162,16 +171,20 @@ DEFAULT_DEVICE_TYPES = [
         "control_components": [
             {"type": "switch", "label": "开关"},
             {"type": "slider", "label": "温度设置", "min": 16, "max": 30, "unit": "°C"},
-            {"type": "select", "label": "模式", "options": ["制冷", "制热", "自动", "除湿"]}
+            {
+                "type": "select",
+                "label": "模式",
+                "options": ["制冷", "制热", "自动", "除湿"],
+            },
         ],
         "data_fields": [
             {"key": "power_watts", "label": "功率", "unit": "W", "type": "number"},
             {"key": "temperature", "label": "室内温度", "unit": "°C", "type": "number"},
             {"key": "humidity", "label": "湿度", "unit": "%", "type": "number"},
-            {"key": "target_temp", "label": "目标温度", "unit": "°C", "type": "number"}
+            {"key": "target_temp", "label": "目标温度", "unit": "°C", "type": "number"},
         ],
         "matter_device_type": 0x0301,
-        "matter_clusters": [0x0402, 0x0B04]
+        "matter_clusters": [0x0402, 0x0B04],
     },
     {
         "type_key": "lighting",
@@ -184,14 +197,14 @@ DEFAULT_DEVICE_TYPES = [
         "control_components": [
             {"type": "switch", "label": "开关"},
             {"type": "slider", "label": "亮度", "min": 0, "max": 100, "unit": "%"},
-            {"type": "color", "label": "颜色"}
+            {"type": "color", "label": "颜色"},
         ],
         "data_fields": [
             {"key": "power_watts", "label": "功率", "unit": "W", "type": "number"},
-            {"key": "brightness", "label": "亮度", "unit": "%", "type": "number"}
+            {"key": "brightness", "label": "亮度", "unit": "%", "type": "number"},
         ],
         "matter_device_type": 0x0100,
-        "matter_clusters": [0x0006, 0x0008, 0x0300]
+        "matter_clusters": [0x0006, 0x0008, 0x0300],
     },
     {
         "type_key": "appliance",
@@ -201,14 +214,12 @@ DEFAULT_DEVICE_TYPES = [
         "icon": "plug",
         "color": "#64748b",
         "capabilities": ["power_monitoring", "on_off_control"],
-        "control_components": [
-            {"type": "switch", "label": "电源开关"}
-        ],
+        "control_components": [{"type": "switch", "label": "电源开关"}],
         "data_fields": [
             {"key": "power_watts", "label": "功率", "unit": "W", "type": "number"},
-            {"key": "energy_kwh", "label": "用电量", "unit": "kWh", "type": "number"}
+            {"key": "energy_kwh", "label": "用电量", "unit": "kWh", "type": "number"},
         ],
         "matter_device_type": 0x010A,
-        "matter_clusters": [0x0006, 0x0B04, 0x0702]
-    }
+        "matter_clusters": [0x0006, 0x0B04, 0x0702],
+    },
 ]

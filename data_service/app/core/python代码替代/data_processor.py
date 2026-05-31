@@ -3,16 +3,17 @@
 该模块可被FastAPI端点、Streamlit和React应用共享调用，体现"逻辑复用"
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
-from datetime import datetime, timedelta
-from typing import List, Dict, Optional, Tuple
-import joblib
 import logging
 import os
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+
+import joblib
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +44,8 @@ class EnergyDataProcessor:
         df = pd.DataFrame(readings)
 
         # 确保timestamp列是datetime类型
-        if 'timestamp' in df.columns:
-            df['timestamp'] = pd.to_datetime(df['timestamp'])
+        if "timestamp" in df.columns:
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
 
         return df
 
@@ -63,19 +64,32 @@ class EnergyDataProcessor:
             return pd.DataFrame()
 
         df = df.copy()
-        df['hour'] = df['timestamp'].dt.floor('H')
+        df["hour"] = df["timestamp"].dt.floor("H")
 
-        hourly_stats = df.groupby('hour').agg({
-            'power_watts': ['mean', 'max', 'min', 'std', 'count'],
-            'energy_kwh': 'sum',
-            'voltage': 'mean',
-            'current_amps': 'mean'
-        }).reset_index()
+        hourly_stats = (
+            df.groupby("hour")
+            .agg(
+                {
+                    "power_watts": ["mean", "max", "min", "std", "count"],
+                    "energy_kwh": "sum",
+                    "voltage": "mean",
+                    "current_amps": "mean",
+                }
+            )
+            .reset_index()
+        )
 
         # 展平多级列名
         hourly_stats.columns = [
-            'hour', 'avg_power', 'max_power', 'min_power', 'power_std',
-            'reading_count', 'total_energy_kwh', 'avg_voltage', 'avg_current'
+            "hour",
+            "avg_power",
+            "max_power",
+            "min_power",
+            "power_std",
+            "reading_count",
+            "total_energy_kwh",
+            "avg_voltage",
+            "avg_current",
         ]
 
         # 填充NaN值
@@ -98,18 +112,31 @@ class EnergyDataProcessor:
             return pd.DataFrame()
 
         df = df.copy()
-        df['day'] = df['timestamp'].dt.date
+        df["day"] = df["timestamp"].dt.date
 
-        daily_stats = df.groupby('day').agg({
-            'power_watts': ['mean', 'max', 'min', 'std', 'count'],
-            'energy_kwh': 'sum',
-            'voltage': 'mean',
-            'current_amps': 'mean'
-        }).reset_index()
+        daily_stats = (
+            df.groupby("day")
+            .agg(
+                {
+                    "power_watts": ["mean", "max", "min", "std", "count"],
+                    "energy_kwh": "sum",
+                    "voltage": "mean",
+                    "current_amps": "mean",
+                }
+            )
+            .reset_index()
+        )
 
         daily_stats.columns = [
-            'day', 'avg_power', 'max_power', 'min_power', 'power_std',
-            'reading_count', 'total_energy_kwh', 'avg_voltage', 'avg_current'
+            "day",
+            "avg_power",
+            "max_power",
+            "min_power",
+            "power_std",
+            "reading_count",
+            "total_energy_kwh",
+            "avg_voltage",
+            "avg_current",
         ]
 
         daily_stats = daily_stats.fillna(0)
@@ -131,16 +158,26 @@ class EnergyDataProcessor:
             return pd.DataFrame()
 
         df = df.copy()
-        df['week'] = df['timestamp'].dt.isocalendar().week
-        df['year'] = df['timestamp'].dt.year
-        df['year_week'] = df['year'].astype(str) + '-W' + df['week'].astype(str).str.zfill(2)
+        df["week"] = df["timestamp"].dt.isocalendar().week
+        df["year"] = df["timestamp"].dt.year
+        df["year_week"] = (
+            df["year"].astype(str) + "-W" + df["week"].astype(str).str.zfill(2)
+        )
 
-        weekly_stats = df.groupby('year_week').agg({
-            'power_watts': ['mean', 'max', 'min', 'count'],
-            'energy_kwh': 'sum'
-        }).reset_index()
+        weekly_stats = (
+            df.groupby("year_week")
+            .agg({"power_watts": ["mean", "max", "min", "count"], "energy_kwh": "sum"})
+            .reset_index()
+        )
 
-        weekly_stats.columns = ['year_week', 'avg_power', 'max_power', 'min_power', 'reading_count', 'total_energy_kwh']
+        weekly_stats.columns = [
+            "year_week",
+            "avg_power",
+            "max_power",
+            "min_power",
+            "reading_count",
+            "total_energy_kwh",
+        ]
         weekly_stats = weekly_stats.fillna(0)
 
         return weekly_stats
@@ -157,10 +194,10 @@ class EnergyDataProcessor:
         Returns:
             float: 总成本
         """
-        if df.empty or 'energy_kwh' not in df.columns:
+        if df.empty or "energy_kwh" not in df.columns:
             return 0.0
 
-        total_energy = df['energy_kwh'].sum()
+        total_energy = df["energy_kwh"].sum()
         return round(total_energy * rate_per_kwh, 2)
 
     @staticmethod
@@ -179,15 +216,15 @@ class EnergyDataProcessor:
             return df
 
         df = df.copy()
-        mean_power = df['power_watts'].mean()
-        std_power = df['power_watts'].std()
+        mean_power = df["power_watts"].mean()
+        std_power = df["power_watts"].std()
 
         if std_power == 0:
-            df['is_anomaly'] = False
-            df['z_score'] = 0
+            df["is_anomaly"] = False
+            df["z_score"] = 0
         else:
-            df['z_score'] = (df['power_watts'] - mean_power) / std_power
-            df['is_anomaly'] = abs(df['z_score']) > threshold
+            df["z_score"] = (df["power_watts"] - mean_power) / std_power
+            df["is_anomaly"] = abs(df["z_score"]) > threshold
 
         return df
 
@@ -206,9 +243,9 @@ class EnergyDataProcessor:
             return {"peak_hours": [], "peak_power": 0}
 
         df = df.copy()
-        df['hour'] = df['timestamp'].dt.hour
+        df["hour"] = df["timestamp"].dt.hour
 
-        hourly_avg = df.groupby('hour')['power_watts'].mean()
+        hourly_avg = df.groupby("hour")["power_watts"].mean()
 
         # 找出功率最高的3个小时
         peak_hours = hourly_avg.nlargest(3).index.tolist()
@@ -217,7 +254,7 @@ class EnergyDataProcessor:
         return {
             "peak_hours": peak_hours,
             "peak_power": round(peak_power, 2),
-            "hourly_distribution": {str(h): round(p, 2) for h, p in hourly_avg.items()}
+            "hourly_distribution": {str(h): round(p, 2) for h, p in hourly_avg.items()},
         }
 
 
@@ -227,7 +264,7 @@ class EnergyPredictor:
     def __init__(self):
         self.model = None
         self.is_trained = False
-        self.feature_columns = ['hour', 'day_of_week', 'is_weekend', 'prev_power']
+        self.feature_columns = ["hour", "day_of_week", "is_weekend", "prev_power"]
 
     def prepare_features(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
         """
@@ -242,19 +279,21 @@ class EnergyPredictor:
         df = df.copy()
 
         # 提取时间特征
-        df['hour'] = df['timestamp'].dt.hour
-        df['day_of_week'] = df['timestamp'].dt.dayofweek
-        df['is_weekend'] = (df['day_of_week'] >= 5).astype(int)
+        df["hour"] = df["timestamp"].dt.hour
+        df["day_of_week"] = df["timestamp"].dt.dayofweek
+        df["is_weekend"] = (df["day_of_week"] >= 5).astype(int)
 
         # 创建滞后特征（前一个时间点的功率）
-        df['prev_power'] = df['power_watts'].shift(1)
+        df["prev_power"] = df["power_watts"].shift(1)
         df = df.dropna()
 
         if len(df) < 10:
-            raise ValueError("Insufficient data for training. Need at least 10 records.")
+            raise ValueError(
+                "Insufficient data for training. Need at least 10 records."
+            )
 
         X = df[self.feature_columns]
-        y = df['power_watts']
+        y = df["power_watts"]
 
         return X, y
 
@@ -296,7 +335,9 @@ class EnergyPredictor:
                 "r2_score": round(r2, 4),
                 "training_samples": len(X_train),
                 "test_samples": len(X_test),
-                "feature_importance": dict(zip(self.feature_columns, self.model.coef_.tolist()))
+                "feature_importance": dict(
+                    zip(self.feature_columns, self.model.coef_.tolist())
+                ),
             }
 
         except Exception as e:
@@ -336,27 +377,31 @@ class EnergyPredictor:
             raise RuntimeError("Model not trained. Call train() first.")
 
         predictions = []
-        last_power = df['power_watts'].iloc[-1] if not df.empty else 0
+        last_power = df["power_watts"].iloc[-1] if not df.empty else 0
 
         current_time = datetime.utcnow()
 
         for i in range(hours):
-            future_time = current_time + timedelta(hours=i+1)
+            future_time = current_time + timedelta(hours=i + 1)
 
             features = {
-                'hour': future_time.hour,
-                'day_of_week': future_time.weekday(),
-                'is_weekend': 1 if future_time.weekday() >= 5 else 0,
-                'prev_power': last_power if i == 0 else predictions[-1]['predicted_power']
+                "hour": future_time.hour,
+                "day_of_week": future_time.weekday(),
+                "is_weekend": 1 if future_time.weekday() >= 5 else 0,
+                "prev_power": (
+                    last_power if i == 0 else predictions[-1]["predicted_power"]
+                ),
             }
 
             predicted_power = self.predict(features)
 
-            predictions.append({
-                "timestamp": future_time.isoformat(),
-                "predicted_power": predicted_power,
-                "hour": future_time.hour
-            })
+            predictions.append(
+                {
+                    "timestamp": future_time.isoformat(),
+                    "predicted_power": predicted_power,
+                    "hour": future_time.hour,
+                }
+            )
 
         return predictions
 

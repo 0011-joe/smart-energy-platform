@@ -23,10 +23,7 @@ async def test_create_reading(client, sample_reading_data):
 @pytest.mark.asyncio
 async def test_create_reading_invalid_power(client):
     """测试创建读数时功率为负数（应失败）"""
-    reading_data = {
-        "device_id": "test_device",
-        "power_watts": -100  # 负功率应被拒绝
-    }
+    reading_data = {"device_id": "test_device", "power_watts": -100}  # 负功率应被拒绝
     response = await client.post("/api/readings/", json=reading_data)
     assert response.status_code == 422  # 验证错误
 
@@ -34,9 +31,7 @@ async def test_create_reading_invalid_power(client):
 @pytest.mark.asyncio
 async def test_create_reading_missing_device_id(client):
     """测试创建读数时缺少设备ID（应失败）"""
-    reading_data = {
-        "power_watts": 1000.0
-    }
+    reading_data = {"power_watts": 1000.0}
     response = await client.post("/api/readings/", json=reading_data)
     assert response.status_code == 422
 
@@ -88,8 +83,7 @@ async def test_get_readings_with_filters(client, sample_reading_data):
 
     # 带设备ID过滤
     response = await client.get(
-        "/api/readings/",
-        params={"device_id": sample_reading_data["device_id"]}
+        "/api/readings/", params={"device_id": sample_reading_data["device_id"]}
     )
 
     assert response.status_code == 200
@@ -106,7 +100,7 @@ async def test_get_device_summary(client, sample_reading_data):
     # 获取汇总
     response = await client.get(
         f"/api/readings/device/{sample_reading_data['device_id']}/summary",
-        params={"hours": 24}
+        params={"hours": 24},
     )
 
     assert response.status_code == 200

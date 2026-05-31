@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import Callable, Optional
 
 import paho.mqtt.client as mqtt
-
 from app.core.config import settings
 from app.core.database import async_session
 from app.models.device import Device
@@ -76,7 +75,7 @@ class MQTTClient:
                     device = Device(
                         device_id=device_id,
                         name=f"Device {device_id}",
-                        device_type=payload.get("device_type", "appliance")
+                        device_type=payload.get("device_type", "appliance"),
                     )
                     session.add(device)
                     await session.flush()
@@ -84,14 +83,16 @@ class MQTTClient:
                 # 创建能耗读数记录
                 reading = EnergyReading(
                     device_id=device_id,
-                    timestamp=datetime.fromisoformat(payload.get("timestamp", datetime.utcnow().isoformat())),
+                    timestamp=datetime.fromisoformat(
+                        payload.get("timestamp", datetime.utcnow().isoformat())
+                    ),
                     power_watts=payload.get("power_watts", 0),
                     energy_kwh=payload.get("energy_kwh"),
                     voltage=payload.get("voltage"),
                     current_amps=payload.get("current_amps"),
                     frequency_hz=payload.get("frequency_hz"),
                     power_factor=payload.get("power_factor"),
-                    metadata=payload.get("metadata")
+                    metadata=payload.get("metadata"),
                 )
                 session.add(reading)
 
@@ -99,7 +100,9 @@ class MQTTClient:
                 device.last_seen = datetime.utcnow()
 
                 await session.commit()
-                logger.info(f"Saved reading for device {device_id}: {payload.get('power_watts')}W")
+                logger.info(
+                    f"Saved reading for device {device_id}: {payload.get('power_watts')}W"
+                )
 
         except Exception as e:
             logger.error(f"Error saving reading to database: {e}")
@@ -114,12 +117,10 @@ class MQTTClient:
     async def connect(self):
         """连接到MQTT Broker"""
         try:
-            logger.info(f"Connecting to MQTT Broker at {settings.MQTT_BROKER}:{settings.MQTT_PORT}")
-            self.client.connect(
-                settings.MQTT_BROKER,
-                settings.MQTT_PORT,
-                keepalive=60
+            logger.info(
+                f"Connecting to MQTT Broker at {settings.MQTT_BROKER}:{settings.MQTT_PORT}"
             )
+            self.client.connect(settings.MQTT_BROKER, settings.MQTT_PORT, keepalive=60)
             self.client.loop_start()
             logger.info("MQTT client started")
         except Exception as e:

@@ -1,19 +1,21 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Float, ForeignKey, JSON, String
+from app.core.database import Base
+from sqlalchemy import JSON, Column, DateTime, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-
-from app.core.database import Base
 
 
 class EnergyReading(Base):
     """能耗读数表 - PostgreSQL存储元数据"""
+
     __tablename__ = "energy_readings"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    device_id = Column(String(100), ForeignKey("devices.device_id"), nullable=False, index=True)
+    device_id = Column(
+        String(100), ForeignKey("devices.device_id"), nullable=False, index=True
+    )
     timestamp = Column(DateTime, nullable=False, index=True)
     power_watts = Column(Float, nullable=False)  # 瞬时功率(瓦)
     energy_kwh = Column(Float)  # 累计电量(千瓦时)

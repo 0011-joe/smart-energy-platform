@@ -6,19 +6,19 @@
 
 from typing import List
 
+from app.core.database import get_db
+from app.models.device_type import DEFAULT_DEVICE_TYPES, DeviceTypeConfig
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.core.database import get_db
-from app.models.device_type import DEFAULT_DEVICE_TYPES, DeviceTypeConfig
 
 router = APIRouter()
 
 
 class DeviceTypeCreate(BaseModel):
     """设备类型创建请求"""
+
     type_key: str
     display_name: str
     description: str = None
@@ -34,6 +34,7 @@ class DeviceTypeCreate(BaseModel):
 
 class DeviceTypeUpdate(BaseModel):
     """设备类型更新请求"""
+
     display_name: str = None
     description: str = None
     category: str = None
@@ -47,9 +48,7 @@ class DeviceTypeUpdate(BaseModel):
 
 @router.get("/", response_model=List[dict])
 async def get_device_types(
-    category: str = None,
-    is_active: bool = True,
-    db: AsyncSession = Depends(get_db)
+    category: str = None, is_active: bool = True, db: AsyncSession = Depends(get_db)
 ):
     """
     获取所有设备类型配置
@@ -73,10 +72,7 @@ async def get_device_types(
 
 
 @router.get("/{type_key}", response_model=dict)
-async def get_device_type(
-    type_key: str,
-    db: AsyncSession = Depends(get_db)
-):
+async def get_device_type(type_key: str, db: AsyncSession = Depends(get_db)):
     """获取指定设备类型配置"""
     query = select(DeviceTypeConfig).where(DeviceTypeConfig.type_key == type_key)
     result = await db.execute(query)
@@ -90,8 +86,7 @@ async def get_device_type(
 
 @router.post("/", response_model=dict, status_code=201)
 async def create_device_type(
-    device_type: DeviceTypeCreate,
-    db: AsyncSession = Depends(get_db)
+    device_type: DeviceTypeCreate, db: AsyncSession = Depends(get_db)
 ):
     """创建新的设备类型"""
     # 检查是否已存在
@@ -113,9 +108,7 @@ async def create_device_type(
 
 @router.put("/{type_key}", response_model=dict)
 async def update_device_type(
-    type_key: str,
-    update_data: DeviceTypeUpdate,
-    db: AsyncSession = Depends(get_db)
+    type_key: str, update_data: DeviceTypeUpdate, db: AsyncSession = Depends(get_db)
 ):
     """更新设备类型配置"""
     query = select(DeviceTypeConfig).where(DeviceTypeConfig.type_key == type_key)
@@ -137,10 +130,7 @@ async def update_device_type(
 
 
 @router.delete("/{type_key}", status_code=204)
-async def delete_device_type(
-    type_key: str,
-    db: AsyncSession = Depends(get_db)
-):
+async def delete_device_type(type_key: str, db: AsyncSession = Depends(get_db)):
     """删除设备类型（软删除，设置为非激活）"""
     query = select(DeviceTypeConfig).where(DeviceTypeConfig.type_key == type_key)
     result = await db.execute(query)
@@ -154,9 +144,7 @@ async def delete_device_type(
 
 
 @router.post("/init-defaults", response_model=dict)
-async def initialize_default_types(
-    db: AsyncSession = Depends(get_db)
-):
+async def initialize_default_types(db: AsyncSession = Depends(get_db)):
     """初始化默认设备类型"""
     created = 0
     skipped = 0
@@ -176,8 +164,4 @@ async def initialize_default_types(
 
     await db.commit()
 
-    return {
-        "created": created,
-        "skipped": skipped,
-        "total": len(DEFAULT_DEVICE_TYPES)
-    }
+    return {"created": created, "skipped": skipped, "total": len(DEFAULT_DEVICE_TYPES)}

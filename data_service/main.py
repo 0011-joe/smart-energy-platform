@@ -7,22 +7,20 @@ Smart Energy Platform - FastAPI数据服务
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.inmemory import InMemoryBackend
-
 from app.api.device_types import router as device_types_router
 from app.api.devices import router as devices_router
 from app.api.readings import router as readings_router
 from app.core.config import settings
 from app.core.database import init_db
 from app.services.mqtt_client import MQTTClient
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 
 # 配置日志
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -82,19 +80,10 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_tags=[
-        {
-            "name": "能耗数据",
-            "description": "能耗数据的采集和查询"
-        },
-        {
-            "name": "设备管理",
-            "description": "设备的注册和管理"
-        },
-        {
-            "name": "设备类型",
-            "description": "设备类型配置管理"
-        }
-    ]
+        {"name": "能耗数据", "description": "能耗数据的采集和查询"},
+        {"name": "设备管理", "description": "设备的注册和管理"},
+        {"name": "设备类型", "description": "设备类型配置管理"},
+    ],
 )
 
 # CORS配置
@@ -123,8 +112,8 @@ async def root():
         "endpoints": {
             "readings": "/api/readings",
             "devices": "/api/devices",
-            "device_types": "/api/device-types"
-        }
+            "device_types": "/api/device-types",
+        },
     }
 
 
@@ -134,16 +123,14 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "data_service",
-        "version": settings.APP_VERSION
+        "version": settings.APP_VERSION,
     }
 
 
 @app.get("/api/status")
 async def api_status():
     """API状态信息"""
-    mqtt_connected = (
-        app.state.mqtt_client and app.state.mqtt_client.is_connected
-    )
+    mqtt_connected = app.state.mqtt_client and app.state.mqtt_client.is_connected
     mqtt_status = "connected" if mqtt_connected else "disconnected"
     return {
         "api": "running",

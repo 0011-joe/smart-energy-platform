@@ -1,24 +1,19 @@
+from app.core.config import settings
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
-
-from app.core.config import settings
 
 # PostgreSQL异步引擎
 engine = create_async_engine(
     settings.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://"),
     echo=settings.DEBUG,
     pool_size=20,
-    max_overflow=10
+    max_overflow=10,
 )
 
 # 异步会话工厂
-async_session = async_sessionmaker(
-    engine,
-    class_=AsyncSession,
-    expire_on_commit=False
-)
+async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 # SQLAlchemy基类
@@ -28,9 +23,7 @@ class Base(DeclarativeBase):
 
 # InfluxDB客户端
 influx_client = InfluxDBClient(
-    url=settings.INFLUXDB_URL,
-    token=settings.INFLUXDB_TOKEN,
-    org=settings.INFLUXDB_ORG
+    url=settings.INFLUXDB_URL, token=settings.INFLUXDB_TOKEN, org=settings.INFLUXDB_ORG
 )
 
 write_api = influx_client.write_api(write_options=SYNCHRONOUS)

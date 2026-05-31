@@ -3,10 +3,6 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.config import settings
 from app.core.database import get_db, get_influx_query_api, get_influx_write_api
 from app.models.device import Device
@@ -18,6 +14,9 @@ from app.schemas.reading import (
     EnergyReadingResponse,
     ReadingQueryParams,
 )
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -25,8 +24,7 @@ router = APIRouter()
 
 @router.post("/", response_model=EnergyReadingResponse, status_code=201)
 async def create_reading(
-    reading: EnergyReadingCreate,
-    db: AsyncSession = Depends(get_db)
+    reading: EnergyReadingCreate, db: AsyncSession = Depends(get_db)
 ):
     """
     创建单条能耗读数
@@ -47,7 +45,7 @@ async def create_reading(
             device = Device(
                 device_id=reading.device_id,
                 name=f"Device {reading.device_id}",
-                device_type="appliance"
+                device_type="appliance",
             )
             db.add(device)
             await db.flush()
@@ -62,7 +60,7 @@ async def create_reading(
             current_amps=reading.current_amps,
             frequency_hz=reading.frequency_hz,
             power_factor=reading.power_factor,
-            metadata=reading.metadata
+            metadata=reading.metadata,
         )
         db.add(db_reading)
         await db.flush()
@@ -75,7 +73,9 @@ async def create_reading(
                 "measurement": "energy_reading",
                 "tags": {
                     "device_id": reading.device_id,
-                    "device_type": device.device_type.value if device.device_type else "unknown"
+                    "device_type": (
+                        device.device_type.value if device.device_type else "unknown"
+                    ),
                 },
                 "fields": {
                     "power_watts": reading.power_watts,
@@ -83,14 +83,12 @@ async def create_reading(
                     "voltage": reading.voltage or 0.0,
                     "current_amps": reading.current_amps or 0.0,
                     "frequency_hz": reading.frequency_hz or 50.0,
-                    "power_factor": reading.power_factor or 1.0
+                    "power_factor": reading.power_factor or 1.0,
                 },
-                "time": db_reading.timestamp
+                "time": db_reading.timestamp,
             }
             write_api.write(
-                bucket=settings.INFLUXDB_BUCKET,
-                org=settings.INFLUXDB_ORG,
-                record=point
+                bucket=settings.INFLUXDB_BUCKET, org=settings.INFLUXDB_ORG, record=point
             )
         except Exception as e:
             logger.warning(f"Failed to write to InfluxDB: {e}")
@@ -109,8 +107,7 @@ async def create_reading(
 
 @router.post("/batch", response_model=dict, status_code=201)
 async def create_readings_batch(
-    batch: EnergyReadingBatch,
-    db: AsyncSession = Depends(get_db)
+    batch: EnergyReadingBatch, db: AsyncSession = Depends(get_db)
 ):
     """
     批量创建能耗读数
@@ -132,7 +129,7 @@ async def create_readings_batch(
                     current_amps=reading.current_amps,
                     frequency_hz=reading.frequency_hz,
                     power_factor=reading.power_factor,
-                    metadata=reading.metadata
+                    metadata=reading.metadata,
                 )
                 db.add(db_reading)
                 created_count += 1
@@ -144,7 +141,7 @@ async def create_readings_batch(
         return {
             "created": created_count,
             "errors": errors,
-            "total": len(batch.readings)
+            "total": len(batch.readings),
         }
 
     except Exception as e:
@@ -159,7 +156,7 @@ async def get_readings(
     end_time: Optional[datetime] = Query(None, description="结束时间"),
     limit: int = Query(100, ge=1, le=10000, description="返回数量限制"),
     offset: int = Query(0, ge=0, description="偏移量"),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     查询能耗读数列表
@@ -192,7 +189,7 @@ async def get_readings(
 async def get_device_summary(
     device_id: str,
     hours: int = Query(24, ge=1, le=720, description="统计时间范围(小时)"),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     获取设备能耗汇总统计
@@ -209,11 +206,8 @@ async def get_device_summary(
         func.min(EnergyReading.power_watts).label("min_power"),
         func.sum(EnergyReading.energy_kwh).label("total_energy"),
         func.min(EnergyReading.timestamp).label("first_reading"),
-        func.max(EnergyReading.timestamp).label("last_reading")
-    ).where(
-        EnergyReading.device_id == device_id,
-        EnergyReading.timestamp >= start_time
-    )
+        func.max(EnergyReading.timestamp).label("last_reading"),
+    ).where(EnergyReading.device_id == device_id, EnergyReading.timestamp >= start_time)
 
     result = await db.execute(query)
     row = result.one()
@@ -229,7 +223,7 @@ async def get_device_summary(
         min_power=round(row.min_power or 0, 2),
         total_energy_kwh=round(row.total_energy or 0, 4),
         first_reading=row.first_reading,
-        last_reading=row.last_reading
+        last_reading=row.last_reading,
     )
 
 
@@ -238,17 +232,19 @@ async def get_device_readings(
     device_id: str,
     hours: int = Query(24, ge=1, le=720),
     limit: int = Query(100, ge=1, le=10000),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """获取指定设备的最近读数"""
     start_time = datetime.utcnow() - timedelta(hours=hours)
 
-    query = select(EnergyReading).where(
-        EnergyReading.device_id == device_id,
-        EnergyReading.timestamp >= start_time
-    ).order_by(
-        EnergyReading.timestamp.desc()
-    ).limit(limit)
+    query = (
+        select(EnergyReading)
+        .where(
+            EnergyReading.device_id == device_id, EnergyReading.timestamp >= start_time
+        )
+        .order_by(EnergyReading.timestamp.desc())
+        .limit(limit)
+    )
 
     result = await db.execute(query)
     readings = result.scalars().all()
@@ -257,10 +253,7 @@ async def get_device_readings(
 
 
 @router.delete("/{reading_id}", status_code=204)
-async def delete_reading(
-    reading_id: UUID,
-    db: AsyncSession = Depends(get_db)
-):
+async def delete_reading(reading_id: UUID, db: AsyncSession = Depends(get_db)):
     """删除指定读数"""
     query = select(EnergyReading).where(EnergyReading.id == reading_id)
     result = await db.execute(query)

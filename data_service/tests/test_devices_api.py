@@ -87,11 +87,7 @@ async def test_get_device_readings_with_time_range(client, sample_reading_data):
 
     response = await client.get(
         f"/api/devices/{sample_reading_data['device_id']}/readings",
-        params={
-            "start_time": start_time,
-            "end_time": end_time,
-            "limit": 100
-        }
+        params={"start_time": start_time, "end_time": end_time, "limit": 100},
     )
 
     assert response.status_code == 200
@@ -116,7 +112,7 @@ async def test_get_device_hourly_stats(client, sample_reading_data):
     # 获取小时统计
     response = await client.get(
         f"/api/devices/{sample_reading_data['device_id']}/readings/hourly",
-        params={"hours": 24}
+        params={"hours": 24},
     )
 
     assert response.status_code == 200
@@ -133,7 +129,7 @@ async def test_get_device_daily_stats(client, sample_reading_data):
     # 获取日统计
     response = await client.get(
         f"/api/devices/{sample_reading_data['device_id']}/readings/daily",
-        params={"days": 7}
+        params={"days": 7},
     )
 
     assert response.status_code == 200
@@ -148,10 +144,7 @@ async def test_get_devices_with_type_filter(client, sample_reading_data):
     await client.post("/api/readings/", json=sample_reading_data)
 
     # 按类型过滤
-    response = await client.get(
-        "/api/devices/",
-        params={"device_type": "smart_meter"}
-    )
+    response = await client.get("/api/devices/", params={"device_type": "smart_meter"})
 
     assert response.status_code == 200
     data = response.json()
@@ -167,10 +160,7 @@ async def test_get_devices_with_status_filter(client, sample_reading_data):
     await client.post("/api/readings/", json=sample_reading_data)
 
     # 按状态过滤
-    response = await client.get(
-        "/api/devices/",
-        params={"status": "online"}
-    )
+    response = await client.get("/api/devices/", params={"status": "online"})
 
     assert response.status_code == 200
     data = response.json()

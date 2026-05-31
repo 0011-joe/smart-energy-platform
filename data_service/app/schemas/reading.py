@@ -30,13 +30,14 @@ class EnergyReadingCreate(BaseModel):
                 "current_amps": 6.82,
                 "frequency_hz": 50.0,
                 "power_factor": 0.95,
-                "metadata": {"temperature": 25.5, "humidity": 60}
+                "metadata": {"temperature": 25.5, "humidity": 60},
             }
         }
 
 
 class EnergyReadingResponse(BaseModel):
     """能耗数据响应模型"""
+
     id: UUID
     device_id: str
     timestamp: datetime
@@ -55,11 +56,13 @@ class EnergyReadingResponse(BaseModel):
 
 class EnergyReadingBatch(BaseModel):
     """批量能耗数据请求模型"""
+
     readings: List[EnergyReadingCreate] = Field(..., min_length=1, max_length=1000)
 
 
 class DeviceReadingSummary(BaseModel):
     """设备读数汇总"""
+
     device_id: str
     total_readings: int
     avg_power: float
@@ -72,6 +75,7 @@ class DeviceReadingSummary(BaseModel):
 
 class ReadingQueryParams(BaseModel):
     """读数查询参数"""
+
     device_id: Optional[str] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None

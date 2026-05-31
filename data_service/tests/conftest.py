@@ -10,31 +10,23 @@ from datetime import datetime
 from typing import AsyncGenerator
 
 import pytest
-from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.pool import NullPool
-
 from app.core.config import settings
 from app.core.database import Base, get_db
+from httpx import ASGITransport, AsyncClient
 from main import app
-
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 # 测试数据库URL（优先使用环境变量，默认使用SQLite）
 TEST_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
 
 # 创建测试引擎
-test_engine = create_async_engine(
-    TEST_DATABASE_URL,
-    echo=False,
-    poolclass=NullPool
-)
+test_engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
 
 # 测试会话工厂
 test_async_session = async_sessionmaker(
-    test_engine,
-    class_=AsyncSession,
-    expire_on_commit=False
+    test_engine, class_=AsyncSession, expire_on_commit=False
 )
 
 
@@ -100,7 +92,7 @@ def sample_device_data():
         "name": "Test Smart Meter",
         "device_type": "smart_meter",
         "location": "Test Location",
-        "is_active": True
+        "is_active": True,
     }
 
 
@@ -115,7 +107,7 @@ def sample_reading_data():
         "current_amps": 6.82,
         "frequency_hz": 50.0,
         "power_factor": 0.95,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -124,12 +116,14 @@ def sample_readings_batch():
     """批量读数数据"""
     readings = []
     for i in range(10):
-        readings.append({
-            "device_id": "test_device_001",
-            "power_watts": 1000.0 + i * 100,
-            "energy_kwh": 10.0 + i,
-            "voltage": 220.0,
-            "current_amps": 4.5 + i * 0.5,
-            "timestamp": datetime.utcnow().isoformat()
-        })
+        readings.append(
+            {
+                "device_id": "test_device_001",
+                "power_watts": 1000.0 + i * 100,
+                "energy_kwh": 10.0 + i,
+                "voltage": 220.0,
+                "current_amps": 4.5 + i * 0.5,
+                "timestamp": datetime.utcnow().isoformat(),
+            }
+        )
     return {"readings": readings}

@@ -10,7 +10,9 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     # 数据库配置 - PostgreSQL
-    DATABASE_URL: str = "postgresql://energy_admin:secure_password_123@localhost:5432/smart_energy"
+    DATABASE_URL: str = (
+        "postgresql://energy_admin:secure_password_123@localhost:5432/smart_energy"
+    )
 
     # InfluxDB配置
     INFLUXDB_URL: str = "http://localhost:8086"

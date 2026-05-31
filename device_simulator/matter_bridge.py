@@ -49,10 +49,10 @@ Matter桥接器（Bridge）用于将非Matter设备接入Matter生态系统。
 import json
 import logging
 import uuid
-from datetime import datetime
-from typing import Dict, List, Optional
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +61,7 @@ logger = logging.getLogger(__name__)
 # Matter协议核心概念定义
 # ============================================================================
 
+
 class MatterDeviceType(Enum):
     """
     Matter设备类型枚举
@@ -68,18 +69,19 @@ class MatterDeviceType(Enum):
     每种设备类型对应特定的功能集和集群组合
     参考：Matter Application Cluster Specification
     """
-    ON_OFF_LIGHT = 0x0100              # 开关灯
-    DIMMABLE_LIGHT = 0x0101            # 调光灯
-    ON_OFF_PLUG_IN_UNIT = 0x010A       # 智能插座（开/关）
-    DIMMABLE_PLUG_IN_UNIT = 0x010B     # 可调光插座
-    SMART_LOCK = 0x000A                # 智能锁
-    THERMOSTAT = 0x0301                # 温控器
-    CONTACT_SENSOR = 0x0015            # 门窗传感器
-    LIGHT_SENSOR = 0x0106              # 光照传感器
-    TEMPERATURE_SENSOR = 0x0302        # 温度传感器
-    ENERGY_METER = 0x000D              # 能耗计量设备
-    ELECTRICAL_SENSOR = 0x0510         # 电气传感器
-    BRIDGE = 0x000E                    # 桥接器
+
+    ON_OFF_LIGHT = 0x0100  # 开关灯
+    DIMMABLE_LIGHT = 0x0101  # 调光灯
+    ON_OFF_PLUG_IN_UNIT = 0x010A  # 智能插座（开/关）
+    DIMMABLE_PLUG_IN_UNIT = 0x010B  # 可调光插座
+    SMART_LOCK = 0x000A  # 智能锁
+    THERMOSTAT = 0x0301  # 温控器
+    CONTACT_SENSOR = 0x0015  # 门窗传感器
+    LIGHT_SENSOR = 0x0106  # 光照传感器
+    TEMPERATURE_SENSOR = 0x0302  # 温度传感器
+    ENERGY_METER = 0x000D  # 能耗计量设备
+    ELECTRICAL_SENSOR = 0x0510  # 电气传感器
+    BRIDGE = 0x000E  # 桥接器
 
 
 class MatterCluster(Enum):
@@ -88,15 +90,16 @@ class MatterCluster(Enum):
 
     集群定义了设备的功能接口
     """
-    ON_OFF = 0x0006                    # 开/关控制
-    LEVEL_CONTROL = 0x0008             # 级别控制
-    COLOR_CONTROL = 0x0300             # 颜色控制
-    TEMPERATURE_MEASUREMENT = 0x0402   # 温度测量
-    HUMIDITY_MEASUREMENT = 0x0405      # 湿度测量
-    ELECTRICAL_MEASUREMENT = 0x0B04    # 电气测量
-    ENERGY_METERING = 0x0702           # 能耗计量
-    BRIDGED_DEVICE_BASIC = 0x0039      # 桥接设备基本信息
-    DESCRIPTOR = 0x001D                # 描述符
+
+    ON_OFF = 0x0006  # 开/关控制
+    LEVEL_CONTROL = 0x0008  # 级别控制
+    COLOR_CONTROL = 0x0300  # 颜色控制
+    TEMPERATURE_MEASUREMENT = 0x0402  # 温度测量
+    HUMIDITY_MEASUREMENT = 0x0405  # 湿度测量
+    ELECTRICAL_MEASUREMENT = 0x0B04  # 电气测量
+    ENERGY_METERING = 0x0702  # 能耗计量
+    BRIDGED_DEVICE_BASIC = 0x0039  # 桥接设备基本信息
+    DESCRIPTOR = 0x001D  # 描述符
 
 
 @dataclass
@@ -107,12 +110,13 @@ class MatterEndpoint:
     每个端点代表设备的一个功能单元
     桥接器为每个桥接的设备创建一个端点
     """
+
     endpoint_id: int
     device_type: MatterDeviceType
     clusters: List[MatterCluster]
     name: str
-    vendor_id: int = 0x1234           # 厂商ID
-    product_id: int = 0x5678          # 产品ID
+    vendor_id: int = 0x1234  # 厂商ID
+    product_id: int = 0x5678  # 产品ID
     serial_number: str = ""
     software_version: str = "1.0.0"
     hardware_version: str = "1.0"
@@ -133,7 +137,7 @@ class MatterEndpoint:
             "productId": self.product_id,
             "serialNumber": self.serial_number,
             "softwareVersion": self.software_version,
-            "hardwareVersion": self.hardware_version
+            "hardwareVersion": self.hardware_version,
         }
 
 
@@ -144,6 +148,7 @@ class MatterClusterAttribute:
 
     每个集群包含一组属性，用于描述设备状态
     """
+
     cluster_id: int
     attribute_id: int
     name: str
@@ -156,7 +161,7 @@ class MatterClusterAttribute:
             "attributeId": self.attribute_id,
             "name": self.name,
             "value": self.value,
-            "dataType": self.data_type
+            "dataType": self.data_type,
         }
 
 
@@ -177,14 +182,12 @@ class MatterBridgeDevice:
 
         logger.info(f"Matter Bridge initialized with ID: {self.bridge_id}")
         logger.info("Bridge supports Matter protocol version 1.0")
-        logger.info("Supported device types: Energy Meter, Electrical Sensor, On/Off Plug-in Unit")
+        logger.info(
+            "Supported device types: Energy Meter, Electrical Sensor, On/Off Plug-in Unit"
+        )
 
     def add_bridged_device(
-        self,
-        device_id: str,
-        device_type: str,
-        name: str,
-        location: str = ""
+        self, device_id: str, device_type: str, name: str, location: str = ""
     ) -> MatterEndpoint:
         """
         添加桥接设备到Matter网络
@@ -209,14 +212,16 @@ class MatterBridgeDevice:
             device_type=matter_device_type,
             clusters=clusters,
             name=name,
-            serial_number=device_id
+            serial_number=device_id,
         )
 
         self.endpoints[endpoint_id] = endpoint
 
         logger.info(f"Added bridged device: {name} (ID: {device_id})")
         logger.info(f"  -> Matter Endpoint ID: {endpoint_id}")
-        logger.info(f"  -> Matter Device Type: {matter_device_type.name} (0x{matter_device_type.value:04X})")
+        logger.info(
+            f"  -> Matter Device Type: {matter_device_type.name} (0x{matter_device_type.value:04X})"
+        )
         logger.info(f"  -> Clusters: {[c.name for c in clusters]}")
 
         return endpoint
@@ -234,40 +239,48 @@ class MatterBridgeDevice:
         mapping = {
             "smart_meter": (
                 MatterDeviceType.ENERGY_METER,
-                [MatterCluster.ELECTRICAL_MEASUREMENT, MatterCluster.ENERGY_METERING]
+                [MatterCluster.ELECTRICAL_MEASUREMENT, MatterCluster.ENERGY_METERING],
             ),
             "solar_panel": (
                 MatterDeviceType.ELECTRICAL_SENSOR,
-                [MatterCluster.ELECTRICAL_MEASUREMENT, MatterCluster.ENERGY_METERING]
+                [MatterCluster.ELECTRICAL_MEASUREMENT, MatterCluster.ENERGY_METERING],
             ),
             "battery": (
                 MatterDeviceType.ELECTRICAL_SENSOR,
-                [MatterCluster.ELECTRICAL_MEASUREMENT, MatterCluster.ENERGY_METERING]
+                [MatterCluster.ELECTRICAL_MEASUREMENT, MatterCluster.ENERGY_METERING],
             ),
             "ev_charger": (
                 MatterDeviceType.ON_OFF_PLUG_IN_UNIT,
-                [MatterCluster.ON_OFF, MatterCluster.ELECTRICAL_MEASUREMENT, MatterCluster.ENERGY_METERING]
+                [
+                    MatterCluster.ON_OFF,
+                    MatterCluster.ELECTRICAL_MEASUREMENT,
+                    MatterCluster.ENERGY_METERING,
+                ],
             ),
             "hvac": (
                 MatterDeviceType.THERMOSTAT,
-                [MatterCluster.TEMPERATURE_MEASUREMENT, MatterCluster.ELECTRICAL_MEASUREMENT]
+                [
+                    MatterCluster.TEMPERATURE_MEASUREMENT,
+                    MatterCluster.ELECTRICAL_MEASUREMENT,
+                ],
             ),
             "lighting": (
                 MatterDeviceType.ON_OFF_LIGHT,
-                [MatterCluster.ON_OFF, MatterCluster.LEVEL_CONTROL]
+                [MatterCluster.ON_OFF, MatterCluster.LEVEL_CONTROL],
             ),
             "appliance": (
                 MatterDeviceType.ON_OFF_PLUG_IN_UNIT,
-                [MatterCluster.ON_OFF, MatterCluster.ELECTRICAL_MEASUREMENT]
-            )
+                [MatterCluster.ON_OFF, MatterCluster.ELECTRICAL_MEASUREMENT],
+            ),
         }
 
-        return mapping.get(device_type, (
-            MatterDeviceType.ON_OFF_PLUG_IN_UNIT,
-            [MatterCluster.ON_OFF]
-        ))
+        return mapping.get(
+            device_type, (MatterDeviceType.ON_OFF_PLUG_IN_UNIT, [MatterCluster.ON_OFF])
+        )
 
-    def update_device_state(self, endpoint_id: int, reading: Dict) -> List[MatterClusterAttribute]:
+    def update_device_state(
+        self, endpoint_id: int, reading: Dict
+    ) -> List[MatterClusterAttribute]:
         """
         更新桥接设备状态
 
@@ -288,36 +301,38 @@ class MatterBridgeDevice:
         # 根据端点包含的集群更新相应属性
         for cluster in endpoint.clusters:
             if cluster == MatterCluster.ELECTRICAL_MEASUREMENT:
-                attributes.extend([
-                    MatterClusterAttribute(
-                        cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
-                        attribute_id=0x0000,
-                        name="ActivePower",
-                        value=reading.get("power_watts", 0),
-                        data_type="INT16"
-                    ),
-                    MatterClusterAttribute(
-                        cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
-                        attribute_id=0x0001,
-                        name="RmsVoltage",
-                        value=reading.get("voltage", 220),
-                        data_type="INT16"
-                    ),
-                    MatterClusterAttribute(
-                        cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
-                        attribute_id=0x0002,
-                        name="RmsCurrent",
-                        value=reading.get("current_amps", 0),
-                        data_type="INT16"
-                    ),
-                    MatterClusterAttribute(
-                        cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
-                        attribute_id=0x0003,
-                        name="AcFrequency",
-                        value=reading.get("frequency_hz", 50),
-                        data_type="INT16"
-                    )
-                ])
+                attributes.extend(
+                    [
+                        MatterClusterAttribute(
+                            cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
+                            attribute_id=0x0000,
+                            name="ActivePower",
+                            value=reading.get("power_watts", 0),
+                            data_type="INT16",
+                        ),
+                        MatterClusterAttribute(
+                            cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
+                            attribute_id=0x0001,
+                            name="RmsVoltage",
+                            value=reading.get("voltage", 220),
+                            data_type="INT16",
+                        ),
+                        MatterClusterAttribute(
+                            cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
+                            attribute_id=0x0002,
+                            name="RmsCurrent",
+                            value=reading.get("current_amps", 0),
+                            data_type="INT16",
+                        ),
+                        MatterClusterAttribute(
+                            cluster_id=MatterCluster.ELECTRICAL_MEASUREMENT.value,
+                            attribute_id=0x0003,
+                            name="AcFrequency",
+                            value=reading.get("frequency_hz", 50),
+                            data_type="INT16",
+                        ),
+                    ]
+                )
 
             elif cluster == MatterCluster.ENERGY_METERING:
                 attributes.append(
@@ -326,7 +341,7 @@ class MatterBridgeDevice:
                         attribute_id=0x0000,
                         name="CurrentSummationDelivered",
                         value=reading.get("energy_kwh", 0),
-                        data_type="UINT64"
+                        data_type="UINT64",
                     )
                 )
 
@@ -338,7 +353,7 @@ class MatterBridgeDevice:
                         attribute_id=0x0000,
                         name="MeasuredValue",
                         value=int(temp * 100),  # Matter使用0.01°C单位
-                        data_type="INT16"
+                        data_type="INT16",
                     )
                 )
 
@@ -350,7 +365,7 @@ class MatterBridgeDevice:
                         attribute_id=0x0000,
                         name="OnOff",
                         value=is_on,
-                        data_type="BOOLEAN"
+                        data_type="BOOLEAN",
                     )
                 )
 
@@ -370,18 +385,15 @@ class MatterBridgeDevice:
             "fabricId": self.fabric_id,
             "endpointCount": len(self.endpoints),
             "endpoints": {
-                eid: ep.to_matter_descriptor()
-                for eid, ep in self.endpoints.items()
+                eid: ep.to_matter_descriptor() for eid, ep in self.endpoints.items()
             },
             "capabilities": [
                 "Bridge Mode",
                 "Multiple Endpoints",
                 "Dynamic Device Addition",
-                "State Synchronization"
+                "State Synchronization",
             ],
-            "supportedDeviceTypes": [
-                dt.name for dt in MatterDeviceType
-            ]
+            "supportedDeviceTypes": [dt.name for dt in MatterDeviceType],
         }
 
     def generate_matter_discovery_payload(self) -> str:
@@ -403,20 +415,22 @@ class MatterBridgeDevice:
             "pairingHint": {
                 "powerSync": True,
                 "softAP": False,
-                "manualPairingCode": True
+                "manualPairingCode": True,
             },
             "commissioningMode": {
                 "windowOpen": not self.is_commissioned,
-                "enhancedSetupFlow": False
+                "enhancedSetupFlow": False,
             },
             "bridgeInfo": {
                 "endpointCount": len(self.endpoints),
-                "supportedClusters": list(set(
-                    cluster.value
-                    for endpoint in self.endpoints.values()
-                    for cluster in endpoint.clusters
-                ))
-            }
+                "supportedClusters": list(
+                    set(
+                        cluster.value
+                        for endpoint in self.endpoints.values()
+                        for cluster in endpoint.clusters
+                    )
+                ),
+            },
         }
 
         return json.dumps(payload, indent=2)
@@ -442,7 +456,9 @@ class MatterBridgeSimulator:
         logger.info("Matter Bridge Simulator Started")
         logger.info("=" * 60)
         logger.info("This simulator demonstrates Matter protocol integration")
-        logger.info("In a real deployment, this would be a Matter-certified bridge device")
+        logger.info(
+            "In a real deployment, this would be a Matter-certified bridge device"
+        )
         logger.info("=" * 60)
 
     def register_device(self, device_id: str, device_type: str, name: str) -> int:
@@ -458,21 +474,21 @@ class MatterBridgeSimulator:
             int: 分配的Matter端点ID
         """
         endpoint = self.bridge.add_bridged_device(
-            device_id=device_id,
-            device_type=device_type,
-            name=name
+            device_id=device_id, device_type=device_type, name=name
         )
 
         self.device_mapping[device_id] = endpoint.endpoint_id
 
         # 记录状态
-        self.state_history.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "event": "device_registered",
-            "device_id": device_id,
-            "endpoint_id": endpoint.endpoint_id,
-            "matter_device_type": endpoint.device_type.name
-        })
+        self.state_history.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "event": "device_registered",
+                "device_id": device_id,
+                "endpoint_id": endpoint.endpoint_id,
+                "matter_device_type": endpoint.device_type.name,
+            }
+        )
 
         return endpoint.endpoint_id
 
@@ -503,7 +519,7 @@ class MatterBridgeSimulator:
             "bridgeId": self.bridge.bridge_id,
             "endpointId": endpoint_id,
             "deviceId": device_id,
-            "clusterUpdates": [attr.to_dict() for attr in attributes]
+            "clusterUpdates": [attr.to_dict() for attr in attributes],
         }
 
         logger.info(f"Processed reading for {device_id} -> Endpoint {endpoint_id}")
@@ -566,6 +582,7 @@ class MatterBridgeSimulator:
 # 使用示例和测试
 # ============================================================================
 
+
 def demo_matter_bridge():
     """
     演示Matter桥接器功能
@@ -611,7 +628,7 @@ def demo_matter_bridge():
         "voltage": 220.0,
         "current_amps": 6.82,
         "frequency_hz": 50.0,
-        "metadata": {"temperature": 25.5}
+        "metadata": {"temperature": 25.5},
     }
 
     print("\nProcessing device readings...")

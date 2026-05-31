@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 import pytest
-
 from app.core.data_processor import EnergyDataProcessor, EnergyPredictor
 
 
@@ -19,7 +18,9 @@ def sample_dataframe():
     np.random.seed(42)
     n_records = 100
 
-    timestamps = [datetime.utcnow() - timedelta(minutes=i * 10) for i in range(n_records)]
+    timestamps = [
+        datetime.utcnow() - timedelta(minutes=i * 10) for i in range(n_records)
+    ]
     timestamps.reverse()
 
     data = {
@@ -170,6 +171,4 @@ class TestEnergyPredictor:
         predictor = EnergyPredictor()
 
         with pytest.raises(RuntimeError, match="Model not trained"):
-            predictor.predict(
-                hour=12, day_of_week=3, is_weekend=False, prev_power=1000
-            )
+            predictor.predict(hour=12, day_of_week=3, is_weekend=False, prev_power=1000)

@@ -14,7 +14,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # C++二进制路径
-CPP_BINARY = os.path.join(os.path.dirname(__file__), "build", "smart_energy_device_simulator")
+CPP_BINARY = os.path.join(
+    os.path.dirname(__file__), "build", "smart_energy_device_simulator"
+)
 
 
 def run_cpp_simulator():
@@ -36,11 +38,12 @@ def run_python_simulator():
     """运行Python版本的设备模拟器（回退方案）"""
     logger.info("Starting Python device simulator...")
 
-    import paho.mqtt.client as mqtt
     import json
-    import time
     import random
+    import time
     from datetime import datetime, timezone
+
+    import paho.mqtt.client as mqtt
 
     MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
     MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
@@ -78,11 +81,15 @@ def run_python_simulator():
                 power_factor = 1.0
 
                 if device["type"] == "solar_panel":
-                    power_factor = max(0, 1 - abs(hour - 12) / 6) if 6 <= hour <= 18 else 0
+                    power_factor = (
+                        max(0, 1 - abs(hour - 12) / 6) if 6 <= hour <= 18 else 0
+                    )
                 elif device["type"] == "ev_charger":
                     power_factor = 0.8 if hour >= 22 or hour <= 6 else 0.1
 
-                power = device["base_power"] * power_factor * (0.8 + random.random() * 0.4)
+                power = (
+                    device["base_power"] * power_factor * (0.8 + random.random() * 0.4)
+                )
 
                 payload = {
                     "device_id": device["id"],
@@ -93,7 +100,7 @@ def run_python_simulator():
                     "voltage": round(220 + random.uniform(-5, 5), 1),
                     "current_amps": round(power / 220, 3),
                     "frequency_hz": round(50 + random.uniform(-0.5, 0.5), 2),
-                    "power_factor": round(0.85 + random.random() * 0.15, 2)
+                    "power_factor": round(0.85 + random.random() * 0.15, 2),
                 }
 
                 topic = f"energy/devices/{device['id']}/readings"

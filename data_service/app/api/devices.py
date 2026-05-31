@@ -1,14 +1,13 @@
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.database import get_db
 from app.models.device import Device, DeviceStatus, DeviceType
 from app.models.energy_reading import EnergyReading
 from app.schemas.reading import EnergyReadingResponse
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
@@ -20,7 +19,7 @@ async def get_devices(
     is_active: Optional[bool] = Query(None, description="是否激活"),
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     获取设备列表
@@ -58,17 +57,14 @@ async def get_devices(
             "manufacturer": device.manufacturer,
             "model": device.model,
             "last_seen": device.last_seen.isoformat() if device.last_seen else None,
-            "created_at": device.created_at.isoformat()
+            "created_at": device.created_at.isoformat(),
         }
         for device in devices
     ]
 
 
 @router.get("/{device_id}", response_model=dict)
-async def get_device(
-    device_id: str,
-    db: AsyncSession = Depends(get_db)
-):
+async def get_device(device_id: str, db: AsyncSession = Depends(get_db)):
     """
     获取单个设备详情
 
@@ -94,10 +90,12 @@ async def get_device(
         "manufacturer": device.manufacturer,
         "model": device.model,
         "firmware_version": device.firmware_version,
-        "installation_date": device.installation_date.isoformat() if device.installation_date else None,
+        "installation_date": (
+            device.installation_date.isoformat() if device.installation_date else None
+        ),
         "last_seen": device.last_seen.isoformat() if device.last_seen else None,
         "created_at": device.created_at.isoformat(),
-        "updated_at": device.updated_at.isoformat()
+        "updated_at": device.updated_at.isoformat(),
     }
 
 
@@ -108,7 +106,7 @@ async def get_device_readings(
     end_time: Optional[datetime] = Query(None, description="结束时间"),
     limit: int = Query(100, ge=1, le=10000),
     offset: int = Query(0, ge=0),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     获取指定设备的能耗读数（支持时间范围查询）
@@ -148,7 +146,7 @@ async def get_device_readings(
 async def get_device_hourly_stats(
     device_id: str,
     hours: int = Query(24, ge=1, le=720),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     获取设备按小时聚合的能耗统计
@@ -158,20 +156,20 @@ async def get_device_hourly_stats(
     """
     start_time = datetime.utcnow() - timedelta(hours=hours)
 
-    query = select(
-        func.date_trunc('hour', EnergyReading.timestamp).label('hour'),
-        func.avg(EnergyReading.power_watts).label('avg_power'),
-        func.max(EnergyReading.power_watts).label('max_power'),
-        func.min(EnergyReading.power_watts).label('min_power'),
-        func.sum(EnergyReading.energy_kwh).label('total_energy'),
-        func.count(EnergyReading.id).label('reading_count')
-    ).where(
-        EnergyReading.device_id == device_id,
-        EnergyReading.timestamp >= start_time
-    ).group_by(
-        func.date_trunc('hour', EnergyReading.timestamp)
-    ).order_by(
-        func.date_trunc('hour', EnergyReading.timestamp).desc()
+    query = (
+        select(
+            func.date_trunc("hour", EnergyReading.timestamp).label("hour"),
+            func.avg(EnergyReading.power_watts).label("avg_power"),
+            func.max(EnergyReading.power_watts).label("max_power"),
+            func.min(EnergyReading.power_watts).label("min_power"),
+            func.sum(EnergyReading.energy_kwh).label("total_energy"),
+            func.count(EnergyReading.id).label("reading_count"),
+        )
+        .where(
+            EnergyReading.device_id == device_id, EnergyReading.timestamp >= start_time
+        )
+        .group_by(func.date_trunc("hour", EnergyReading.timestamp))
+        .order_by(func.date_trunc("hour", EnergyReading.timestamp).desc())
     )
 
     result = await db.execute(query)
@@ -184,7 +182,7 @@ async def get_device_hourly_stats(
             "max_power": round(float(stat.max_power or 0), 2),
             "min_power": round(float(stat.min_power or 0), 2),
             "total_energy_kwh": round(float(stat.total_energy or 0), 4),
-            "reading_count": stat.reading_count
+            "reading_count": stat.reading_count,
         }
         for stat in stats
     ]
@@ -194,7 +192,7 @@ async def get_device_hourly_stats(
 async def get_device_daily_stats(
     device_id: str,
     days: int = Query(7, ge=1, le=90),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     获取设备按天聚合的能耗统计
@@ -204,20 +202,20 @@ async def get_device_daily_stats(
     """
     start_time = datetime.utcnow() - timedelta(days=days)
 
-    query = select(
-        func.date_trunc('day', EnergyReading.timestamp).label('day'),
-        func.avg(EnergyReading.power_watts).label('avg_power'),
-        func.max(EnergyReading.power_watts).label('max_power'),
-        func.min(EnergyReading.power_watts).label('min_power'),
-        func.sum(EnergyReading.energy_kwh).label('total_energy'),
-        func.count(EnergyReading.id).label('reading_count')
-    ).where(
-        EnergyReading.device_id == device_id,
-        EnergyReading.timestamp >= start_time
-    ).group_by(
-        func.date_trunc('day', EnergyReading.timestamp)
-    ).order_by(
-        func.date_trunc('day', EnergyReading.timestamp).desc()
+    query = (
+        select(
+            func.date_trunc("day", EnergyReading.timestamp).label("day"),
+            func.avg(EnergyReading.power_watts).label("avg_power"),
+            func.max(EnergyReading.power_watts).label("max_power"),
+            func.min(EnergyReading.power_watts).label("min_power"),
+            func.sum(EnergyReading.energy_kwh).label("total_energy"),
+            func.count(EnergyReading.id).label("reading_count"),
+        )
+        .where(
+            EnergyReading.device_id == device_id, EnergyReading.timestamp >= start_time
+        )
+        .group_by(func.date_trunc("day", EnergyReading.timestamp))
+        .order_by(func.date_trunc("day", EnergyReading.timestamp).desc())
     )
 
     result = await db.execute(query)
@@ -230,7 +228,7 @@ async def get_device_daily_stats(
             "max_power": round(float(stat.max_power or 0), 2),
             "min_power": round(float(stat.min_power or 0), 2),
             "total_energy_kwh": round(float(stat.total_energy or 0), 4),
-            "reading_count": stat.reading_count
+            "reading_count": stat.reading_count,
         }
         for stat in stats
     ]

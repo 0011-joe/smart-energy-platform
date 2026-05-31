@@ -4,21 +4,21 @@
 模拟多种智能家居设备，定时发布能耗数据到MQTT Broker
 """
 
-import paho.mqtt.client as mqtt
 import json
-import time
-import random
 import logging
 import os
-import schedule
+import random
+import threading
+import time
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-import threading
+
+import paho.mqtt.client as mqtt
+import schedule
 
 # 配置日志
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class SimulatedDevice:
                 "voltage": self.voltage,
                 "current_amps": 0.0,
                 "frequency_hz": 50.0,
-                "power_factor": 0.0
+                "power_factor": 0.0,
             }
 
         # 添加随机波动
@@ -75,8 +75,8 @@ class SimulatedDevice:
             "metadata": {
                 "simulated": True,
                 "temperature": round(20 + random.uniform(-5, 15), 1),
-                "humidity": round(40 + random.random() * 40, 1)
-            }
+                "humidity": round(40 + random.random() * 40, 1),
+            },
         }
 
 
@@ -214,7 +214,9 @@ class DeviceSimulator:
     def _on_disconnect(self, client, userdata, rc):
         """MQTT断开回调"""
         if rc != 0:
-            logger.warning(f"Unexpected disconnection from MQTT Broker, return code: {rc}")
+            logger.warning(
+                f"Unexpected disconnection from MQTT Broker, return code: {rc}"
+            )
 
     def connect(self):
         """连接到MQTT Broker"""
@@ -242,7 +244,9 @@ class DeviceSimulator:
 
             result = self.client.publish(topic, payload, qos=1)
             if result.rc == mqtt.MQTT_ERR_SUCCESS:
-                logger.debug(f"Published data for {device.device_id}: {reading['power_watts']}W")
+                logger.debug(
+                    f"Published data for {device.device_id}: {reading['power_watts']}W"
+                )
             else:
                 logger.error(f"Failed to publish data for {device.device_id}")
 
@@ -265,7 +269,9 @@ class DeviceSimulator:
         # 定时发布数据
         schedule.every(PUBLISH_INTERVAL).seconds.do(self.publish_all_devices)
 
-        logger.info(f"Device simulator started, publishing every {PUBLISH_INTERVAL} seconds")
+        logger.info(
+            f"Device simulator started, publishing every {PUBLISH_INTERVAL} seconds"
+        )
         logger.info(f"Simulated devices: {[d.device_id for d in self.devices]}")
 
         try:
