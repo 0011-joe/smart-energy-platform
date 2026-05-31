@@ -1,8 +1,6 @@
 <div align="center"  \"center\"  \  \\"center\">
 
 # ⚡ Smart Energy Platform
-# ⚡ 智能能源平台
-# ⚡ 智能能源平台
 
 **智能能源管理平台 - 集成IoT设备模拟、数据分析与可视化的综合解决方案**
 
